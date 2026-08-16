@@ -4,6 +4,13 @@ Skills and deployments for agentic command-line AI — built around one idea:
 spend frontier-model tokens only where fidelity actually requires them, and
 prove the rest with measurement rather than assertion.
 
+Frontier models give you more deterministic results, but at a significant
+cost. Past the initial analysis of a prompt, lower-cost models are perfectly
+adept at finishing the task — at a significant saving. That is why I built
+this, across two generations of frontier models. Ingest it, let your own model
+work out what applies, and if it saves you precious tokens it has served its
+purpose.
+
 Each folder below is a standalone, self-contained package. Nothing here depends
 on anything outside its own directory except where noted, and every package
 ships its own README, installers for macOS and Windows, and a full
@@ -52,8 +59,8 @@ Significant effort went into that cross-vendor pass specifically because
 single-model design work reads as confident whether or not it is correct.
 
 **Sources over recall.** Every claim that could be grounded was grounded in
-primary vendor documentation and published prior artifacts rather than model memory.
-Each package lists its own derivations under "Sources & derivation" —
+primary vendor documentation and published prior artifacts rather than model
+memory. Each package lists its own derivations under "Sources & derivation" —
 including which parts are original engineering and which are adapted, with
 links to the upstream work.
 

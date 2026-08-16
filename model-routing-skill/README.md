@@ -88,7 +88,7 @@ routing rule that is subtly wrong costs more than the tokens it saves:
 That cross-vendor pass is also why the KPI denominators are ungameable: a
 single-model design tends to grade its own homework, and the peer review is
 what caught it. Claims here are grounded in primary vendor documentation and
-published prior art rather than model recall — the derivations follow, with
+published prior artifacts rather than model recall — the derivations follow, with
 original engineering separated from adapted work.
 
 No percentage of savings is claimed anywhere in this package. The mechanisms
@@ -105,7 +105,7 @@ is exactly what `routing/analyze_routing.py` is for.
   and forcing measurements are preserved in `instructions/model-routing.md`.
 - **Platform:** [GitHub Copilot CLI documentation](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli)
   (custom skills, instructions, sub-agent configuration).
-- **Related prior art (context, not derivation):**
+- **Related prior artifacts (context, not derivation):**
   [FrugalGPT (arXiv:2305.05176)](https://arxiv.org/abs/2305.05176) and
   [RouteLLM (arXiv:2406.18665)](https://arxiv.org/abs/2406.18665) route by
   learned difficulty prediction; this system routes by verifiability and

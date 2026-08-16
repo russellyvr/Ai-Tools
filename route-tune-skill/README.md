@@ -118,7 +118,7 @@ answering independently before anonymized cross-review:
 That pass is what produced the "cannot game its own metrics" property: a
 tuner scored against KPIs it is also allowed to redefine will always converge
 on flattering numbers, so KPI targets were made user-owned and untouchable.
-Claims here are grounded in primary documentation and published prior art
+Claims here are grounded in primary documentation and published prior artifacts
 rather than model recall — the derivations follow.
 
 ## Sources & derivation
@@ -130,7 +130,7 @@ rather than model recall — the derivations follow.
   deployments. Full lineage ships in the companion package's
   `instructions/model-routing.md`.
 - **Platform:** [GitHub Copilot CLI documentation](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli).
-- **Related prior art (context, not derivation):**
+- **Related prior artifacts (context, not derivation):**
   [FrugalGPT (arXiv:2305.05176)](https://arxiv.org/abs/2305.05176),
   [RouteLLM (arXiv:2406.18665)](https://arxiv.org/abs/2406.18665) — learned
   difficulty routing; this system routes by verifiability and dispatch

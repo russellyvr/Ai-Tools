@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>model-routing — deterministic, self-improving model routing for GitHub Copilot CLI</title>
+<style>
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+:root {
+  --bg:#f5f5f7; --card:#ffffff; --text:#1d1d1f; --secondary:#6e6e73;
+  --border:rgba(0,0,0,0.08); --accent:#0071e3; --accent-soft:rgba(0,113,227,0.10);
+  --good:#34c759; --bad:#ff375f; --warn:#ff9f0a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#f5f5f7; --secondary:#98989d;
+    --border:rgba(255,255,255,0.12); }
+}
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+.wrap { max-width:920px; margin:0 auto; padding:48px 20px 64px; }
+h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+.subline { font-size:14px; color:var(--secondary); margin-bottom:32px; }
+section.panel { background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:20px; margin-bottom:24px; }
+.panel h2 { font-size:17px; font-weight:600; letter-spacing:-0.01em; margin:0 0 4px; }
+.panel .sub { font-size:13px; color:var(--secondary); margin:0 0 14px; }
+.panel p, .panel li { font-size:14px; line-height:1.6; }
+.panel ul, .panel ol { padding-left:22px; margin:10px 0; }
+.scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+  font-weight:600; color:var(--secondary); text-align:left; }
+th, td { padding:8px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
+td.wraps { white-space:normal; }
+.k { font-weight:600; }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:12.5px; background:var(--accent-soft); border-radius:4px; padding:1px 5px; }
+pre { background:var(--accent-soft); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-size:12.5px; line-height:1.5; }
+pre code { background:none; padding:0; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.stat-row { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  margin-bottom:24px; }
+.stat { background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:16px 18px; }
+.stat .v { font-size:24px; font-weight:600; letter-spacing:-0.02em; }
+.stat .l { font-size:12px; color:var(--secondary); margin-top:2px; }
+.good { color:var(--good); } .bad { color:var(--bad); }
+footer { font-size:12px; color:var(--secondary); margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>model-routing</h1>
+<div class="subline">Deterministic, self-improving model routing for GitHub Copilot CLI — structural model/effort pins, a verifiability-first routing table, and an LLM-free KPI analyzer. Spend frontier tokens only where fidelity actually requires them. Published for the general public: cut your LLM token spend without losing quality, using a design whose every rule traces back to a measurement. Pairs with the companion <b>route-tune</b> skill (separate package) for the bounded closed-loop tuner.</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="v">3</div><div class="l">tier classes: ECONOMY / STANDARD / FRONTIER</div></div>
+  <div class="stat"><div class="v">7</div><div class="l">rows in the deterministic routing table</div></div>
+  <div class="stat"><div class="v">4</div><div class="l">KPIs measured by the analyzer</div></div>
+  <div class="stat"><div class="v">1</div><div class="l">max autonomous pin change per tuning cycle</div></div>
+</div>
+
+<section class="panel">
+<h2>The problem &amp; the idea</h2>
+<p class="sub">Advisory prose fails; structure doesn't.</p>
+<p>Agentic CLIs dispatch a lot of mechanical work — running tests, grepping,
+collating files, summarizing logs — that a frontier model handles no better
+than a cheap one, at 10&ndash;30&times; the token cost. Earlier versions of
+this system tried to fix that with prose instructions ("prefer cheap models
+for mechanical work"). Measurement showed near-total non-compliance.</p>
+<p>Version 3 moved routing out of prose and into <em>structure</em>:</p>
+<ul>
+<li><b>Structural pins</b> — <code>settings.json &rarr; subagents.agents</code>
+pins each sub-agent type's default model + reasoning effort (explore/task =
+ECONOMY low; code-review/research = STANDARD medium). Pins are defaults, not
+caps: omitting the model parameter applies the pin; setting it explicitly
+routes <em>up</em> for hard work. Config can't be "forgotten" mid-session.</li>
+<li><b>An ambient rubric</b> — a compact 4-row routing table injected into every
+turn via the CLI's global instructions, with the full specification kept as a
+reference document.</li>
+<li><b>A closed feedback loop</b> — a deterministic analyzer measures actual
+routing behavior from local session logs; the companion
+<code>/route-tune</code> skill (published as a separate package) reads the
+KPIs and applies at most one bounded, logged, reversible change per cycle,
+then verifies it against the next cycle and auto-reverts on regression.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Core principle: verifiability-first</h2>
+<p class="sub">Cheap routing is lossless only when correctness is checkable.</p>
+<p>Tasks are routed by objective features, never intuition:</p>
+<ul>
+<li><b>Verifiable</b> — output validated by tests, compiler, linter, schema, or
+diff. A cheap model + a verification loop equals frontier fidelity
+<em>by construction</em>.</li>
+<li><b>Extractive</b> — the answer already exists in files or output; the model
+only finds, lists, or summarizes it.</li>
+<li><b>Generative + unverifiable</b> — judgment, architecture, ambiguity,
+security reasoning. Stays FRONTIER, always.</li>
+</ul>
+<p>The zero-loss guarantee is an <b>escalation ladder</b>: execute at the routed
+tier, verify mechanically, and on failure re-run exactly one tier up — never the
+same tier twice. Worst case costs one cheap attempt extra; the typical case
+saves the frontier tokens entirely.</p>
+</section>
+
+<section class="panel">
+<h2>The routing table</h2>
+<p class="sub">Deterministic — first match, top to bottom. Tier classes resolve at runtime from the live model list; model names are never hardcoded (hardcoded names went stale in v1).</p>
+<div class="scroll"><table>
+<tr><th>#</th><th>Task signature</th><th>Tier</th><th>Effort</th></tr>
+<tr><td>1</td><td class="wraps">Run command/test/build/lint &amp; report; file ops; grep/collate; formatting; log parsing</td><td class="k">ECONOMY</td><td>low</td></tr>
+<tr><td>2</td><td class="wraps">File/symbol search, globbing, "where is X"</td><td class="k">ECONOMY</td><td>low</td></tr>
+<tr><td>3</td><td class="wraps">Summarize/extract from existing text, logs, diffs</td><td class="k">ECONOMY&ndash;STANDARD</td><td>low/minimal</td></tr>
+<tr><td>4</td><td class="wraps">Mechanical single-file edit with machine-verifiable result</td><td class="k">STANDARD</td><td>low&ndash;medium</td></tr>
+<tr><td>5</td><td class="wraps">Docs from complete source; pattern-repetitive multi-file change <em>with</em> full test coverage; routine research/review</td><td class="k">STANDARD</td><td>medium</td></tr>
+<tr><td>6</td><td class="wraps">Debugging, root-cause, non-trivial design; multi-file refactor <em>without</em> full tests</td><td class="k">FRONTIER</td><td>high</td></tr>
+<tr><td>7</td><td class="wraps">Security, architecture, ambiguous tradeoffs, irreversible ops, adversarial input, user-facing final synthesis</td><td class="k">FRONTIER</td><td class="bad">max (FLOOR)</td></tr>
+</table></div>
+<p>Tie-breakers: doubt + machine-verifiable &rarr; take the <em>lower</em> tier
+(the ladder protects you); not verifiable &rarr; higher tier; hard-to-reverse
+errors &rarr; FRONTIER regardless. A high-stakes override keeps
+safety/legal/financial/adversarial work high regardless of the row matched.
+Row 7's <code>max</code> is a floor that never drifts down under cost pressure.</p>
+</section>
+
+<section class="panel">
+<h2>The measurement loop</h2>
+<p class="sub">LLM-free analyzer &rarr; KPI targets &rarr; bounded tuner &rarr; verify &amp; revert.</p>
+<ol>
+<li><b>Measure.</b> <code>analyze_routing.py</code> — a deterministic Python
+script, no LLM calls — reads the CLI's local session store and per-session
+event logs and computes four KPIs over a rolling window: frontier cost share;
+average main-session <em>cache-weighted</em> input tokens per turn (uncached
+1.0&times;, cache-write 1.25&times;, cache-read 0.1&times;); ECONOMY share of
+mechanical dispatches; and sub-agent escalation rate. It appends snapshots to
+<code>state.json</code> (trend memory), writes <code>report-latest.md</code>,
+and exits 1 on any KPI breach.</li>
+<li><b>Diagnose.</b> The companion route-tune skill maps each breach to exactly one lever — e.g.
+escalation rate &gt; 15% &rArr; pins too cheap, raise one class; escalation
+&asymp; 0% for 2+ clean cycles &rArr; try one step cheaper; context bloat
+&rArr; hygiene advice, not a routing change; frontier share driven by the main
+session &rArr; <em>advise only</em> (the user's session model is never changed
+autonomously).</li>
+<li><b>Tune (hard limits).</b> At most ONE pin change and one rubric-wording
+refinement per cycle; pin moves are exactly one tier class and must stay inside
+<code>pin_bounds</code> from <code>targets.json</code>; general-purpose and
+security-review pins, the row-7 floor, and the high-stakes override are
+untouchable; every change gets an append-only <code>CHANGELOG.md</code> entry
+with evidence, exact before/after, expected effect, and revert condition.</li>
+<li><b>Verify &amp; revert.</b> Next cycle, the previous change is checked
+against the KPI it targeted: improved/held &rarr; <code>VERIFIED</code>;
+regressed &rarr; exact revert, <code>REVERTED</code>, and a 3-cycle cool-down.
+Externally-sourced changes (user edits, cross-machine syncs) are logged but
+exempt from revert logic, so a sync is never blamed for a KPI move it didn't
+cause.</li>
+</ol>
+</section>
+
+<section class="panel">
+<h2>Design decisions worth stealing</h2>
+<p class="sub">Hardened via cross-machine peer review of a live deployment.</p>
+<ul>
+<li><b>Cache-aware cost KPI:</b> raw input-tokens/turn was ~92% cache reads
+billed at 0.1&times; — the naive metric overstated context cost by ~5&times;.
+Weight tokens by price class before setting targets.</li>
+<li><b>Ungameable denominator:</b> "mechanical work" is classified by dispatch
+surface (the <code>agent_type</code> in the event log), never by intent
+inferred from prose — so the self-tuner cannot game its own KPI.</li>
+<li><b>Quota, not dollars:</b> on subscription billing, savings denominate in
+premium-request/quota headroom, not currency.</li>
+<li><b>Fail open:</b> routing is a cost optimization, not a security gate. Any
+enforcement hook may deny only unambiguous violations, must log everything,
+and passes on doubt — a deterministic script cannot grade prompt hardness.</li>
+<li><b>Config beats prose (measured):</b> in a 14-day natural experiment on a
+second deployment, 13 structurally pinned sub-agent definitions produced 834
+correctly-routed sidechain messages, while prose-only routing rules produced
+zero on the same sessions.</li>
+<li><b>Pins are defaults, not ceilings:</b> the old "session model is the cost
+ceiling" rule was deleted — a cheap main session must be free to escalate
+row-6/7 work <em>up</em> to a frontier model.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Prerequisites</h2>
+<p class="sub">What the deployment assumes.</p>
+<ul>
+<li><b>GitHub Copilot CLI</b> with custom-skill support
+(<code>~/.copilot/skills/</code>), global custom instructions
+(<code>copilot-instructions.md</code>), and per-sub-agent model/effort pins in
+<code>settings.json &rarr; subagents.agents</code>.</li>
+<li><b>Python 3.9+</b> on PATH for the analyzer (standard library only — no
+packages to install).</li>
+<li><b>The CLI's local session store</b> (<code>session-store.db</code> /
+per-session <code>events.jsonl</code> logs under <code>~/.copilot/</code>) —
+the analyzer's only data source. Nothing leaves the machine.</li>
+<li><b>A model list with at least two price classes</b> so ECONOMY/STANDARD/
+FRONTIER patterns in <code>targets.json &rarr; tier_patterns</code> can resolve;
+update the patterns when your provider's model names change.</li>
+<li>Optional: an OS scheduler (Windows Scheduled Task, cron, or launchd) to
+refresh the KPI report weekly so <code>/route-tune</code> always has fresh data.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Installation</h2>
+<p class="sub">Scripted (recommended) or manual. Installers run as the current user, make no network calls, and deliberately never edit your configuration — behavior-changing steps stay manual and are printed at the end.</p>
+<pre><code># macOS
+./install.sh
+
+# Windows (PowerShell 7+)
+pwsh -File .\install.ps1          # add -WhatIf to preview</code></pre>
+<p>Manual equivalent, plus the configuration steps the installers print:</p>
+<pre><code># from this repository root  (~ = your home directory)
+mkdir -p ~/.copilot/routing ~/.copilot/instructions
+cp routing/analyze_routing.py routing/targets.json  ~/.copilot/routing/
+cp instructions/model-routing.md                    ~/.copilot/instructions/
+
+# 1. Pin your sub-agents in ~/.copilot/settings.json, e.g.:
+#    "subagents": { "agents": {
+#        "explore":     { "model": "&lt;economy-model&gt;",  "reasoningEffort": "low" },
+#        "task":        { "model": "&lt;economy-model&gt;",  "reasoningEffort": "low" },
+#        "code-review": { "model": "&lt;standard-model&gt;", "reasoningEffort": "medium" },
+#        "research":    { "model": "&lt;standard-model&gt;", "reasoningEffort": "medium" }
+#    } }
+# 2. Paste the compact routing table (rows 1-7 above) into
+#    ~/.copilot/copilot-instructions.md so it is injected every turn.
+# 3. Adjust tier_patterns in targets.json to match your live model names.
+# 4. Restart the CLI. Optional: install the companion route-tune skill
+#    and run /route-tune for the self-tuning loop.</code></pre>
+<p><code>state.json</code>, <code>report-latest.md</code>, and
+<code>CHANGELOG.md</code> are created by the analyzer/tuner on first run.
+Re-running the analyzer without new data changes nothing.</p>
+</section>
+
+<section class="panel">
+<h2>Method &amp; cost discipline</h2>
+<p class="sub">How this was built, and why the saving is real rather than rhetorical.</p>
+<p>Lowering token consumption is not a side effect of this package — it is the
+entire point. Routing decisions are made by <b>verifiability</b>, so work whose
+output can be machine-checked (tests, builds, lint, schemas, exact diffs) or
+simply extracted from files falls to a cheaper tier losslessly, while
+generative, unverifiable judgment stays at the top. The pins are structural
+rather than advisory because an earlier generation proved that prose guidance
+alone produced measurable non-compliance. The analyzer that scores all of it
+runs zero LLM calls and reads only local session data, so measuring the saving
+never costs tokens of its own.</p>
+<p>The routing table, tier semantics, KPI definitions and pin bounds were
+deliberated across an AI council spanning three independent vendors — each
+answering independently before anonymised cross-review — precisely because a
+routing rule that is subtly wrong costs more than the tokens it saves:</p>
+<div class="scroll"><table>
+<tr><th>Vendor</th><th>Frontier model</th></tr>
+<tr><td class="k">Anthropic</td><td>Claude Fable 5</td></tr>
+<tr><td class="k">Google</td><td>Gemini 3.1 Pro</td></tr>
+<tr><td class="k">OpenAI</td><td>GPT-5.6 Sol</td></tr>
+</table></div>
+<p>That cross-vendor pass is also why the KPI denominators are ungameable: a
+single-model design tends to grade its own homework, and the peer review is
+what caught it. Claims here are grounded in primary vendor documentation and
+published prior art rather than model recall — the derivations follow, with
+original engineering separated from adapted work.</p>
+<p><b>No percentage of savings is claimed anywhere in this package.</b> The
+mechanisms are documented; the arithmetic is yours to run against your own
+KPIs, which is exactly what the analyzer is for.</p>
+</section>
+
+<section class="panel">
+<h2>Sources &amp; derivation</h2>
+<p class="sub">Provenance of the design.</p>
+<ul>
+<li><b>Original iterative engineering (primary source).</b> The system is
+v3.1 of a spec developed across three generations on live Copilot CLI
+deployments: v1 (hardcoded model names — went stale), v2 (advisory prose —
+measured non-compliance), v3.0 (structural pins + closed tuning loop), v3.1
+(cache-aware KPIs and ungameable denominators after a cross-machine peer
+review between two independent deployments of the same spec). The lineage and
+the measurements that forced each change are preserved in
+<code>instructions/model-routing.md</code>.</li>
+<li><b>GitHub Copilot CLI documentation</b> — the platform surfaces this
+design depends on: custom skills, global custom instructions, and
+<code>settings.json</code> sub-agent model/effort configuration
+(<a href="https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli">docs.github.com &mdash; About GitHub Copilot CLI</a>).</li>
+<li><b>Related prior art</b> (independent of this design, cited for context):
+LLM cascades and cost-aware routing — <em>FrugalGPT</em>
+(<a href="https://arxiv.org/abs/2305.05176">arXiv:2305.05176</a>) and
+<em>RouteLLM</em> (<a href="https://arxiv.org/abs/2406.18665">arXiv:2406.18665</a>).
+Those route by learned query-difficulty prediction; this system deliberately
+routes by <em>verifiability and dispatch surface</em> instead, because a
+deterministic, ungameable classifier was a hard requirement for a
+self-tuning loop.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Repository layout</h2>
+<div class="scroll"><table>
+<tr><th>Path</th><th>Purpose</th></tr>
+<tr><td class="k"><code>routing/analyze_routing.py</code></td><td class="wraps">Deterministic, stdlib-only KPI analyzer (LLM-free)</td></tr>
+<tr><td class="k"><code>routing/targets.json</code></td><td class="wraps">KPI targets, cache weights, tier name patterns, per-agent pin bounds</td></tr>
+<tr><td class="k"><code>instructions/model-routing.md</code></td><td class="wraps">Full v3.1 specification with version lineage and rationale</td></tr>
+<tr><td class="k"><code>install.ps1</code></td><td class="wraps">Windows installer (PowerShell 7+, current-user only, backup-first, -WhatIf support)</td></tr>
+<tr><td class="k"><code>install.sh</code></td><td class="wraps">macOS installer (bash 3.2-compatible, current-user only, backup-first)</td></tr>
+<tr><td class="k"><code>docs/index.html</code></td><td class="wraps">This page (GitHub Pages)</td></tr>
+</table></div>
+</section>
+
+<footer>deterministic model routing v3.1 &middot; documentation generated August 2026 &middot;
+all measurements are local; no personal or organizational data is contained in this package.</footer>
+</div>
+</body>
+</html>

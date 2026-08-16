@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "window_days": 7,
+  "billing_unit_note": "KPIs denominate in nano-AIU (premium-request/quota units) and weighted tokens - NOT dollars. Savings = rate-limit/quota headroom (peer-deployment feedback v3.0 s4.3).",
+  "cache_weights": { "uncached": 1.0, "cache_write": 1.25, "cache_read": 0.1 },
+  "tier_patterns": {
+    "ECONOMY": ["mini", "flash", "haiku"],
+    "STANDARD": ["sonnet"],
+    "FRONTIER": ["fable", "opus", "sol", "terra", "luna", "gpt-5.5", "gpt-5.4$", "gemini-3.1-pro", "grok", "kimi", "codex"]
+  },
+  "kpis": {
+    "frontier_cost_share_max": 0.50,
+    "avg_main_weighted_input_per_turn_max": 25000,
+    "economy_share_of_mechanical_dispatches_min": 0.80,
+    "subagent_escalation_rate_max": 0.15,
+    "subagent_escalation_rate_min_healthy": 0.02
+  },
+  "mechanical_agent_types": ["explore", "task"],
+  "mechanical_classification_note": "Mechanical = dispatch surface (agent_type in the task-call event log), never intent inferred from prose - denominator is structural so the tuner cannot game it (peer-deployment feedback s4.2).",
+  "pin_bounds": {
+    "explore": { "floor": "ECONOMY", "ceiling": "STANDARD" },
+    "task": { "floor": "ECONOMY", "ceiling": "STANDARD" },
+    "code-review": { "floor": "STANDARD", "ceiling": "FRONTIER" },
+    "research": { "floor": "STANDARD", "ceiling": "FRONTIER" }
+  },
+  "notes": "Edited only by /route-tune (bounded, one step per cycle, logged to CHANGELOG.md) or by the user directly."
+}

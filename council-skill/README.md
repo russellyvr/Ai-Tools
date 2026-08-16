@@ -76,7 +76,7 @@ model's blind spot could quietly become the spec:
 | OpenAI | GPT-5.6 Sol |
 
 Claims that could be grounded were grounded in primary documentation and
-published prior art rather than model recall — the derivations are listed
+published prior artifacts rather than model recall — the derivations are listed
 below, separated into adapted method and original extensions.
 
 ## Sources & derivation

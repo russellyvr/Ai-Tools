@@ -204,8 +204,11 @@ the analyzer's only data source. Nothing leaves the machine.</li>
 <li><b>A model list with at least two price classes</b> so ECONOMY/STANDARD/
 FRONTIER patterns in <code>targets.json &rarr; tier_patterns</code> can resolve;
 update the patterns when your provider's model names change.</li>
-<li>Optional: an OS scheduler (Windows Scheduled Task, cron, or launchd) to
-refresh the KPI report weekly so <code>/route-tune</code> always has fresh data.</li>
+<li><b>Recommended:</b> an OS scheduler (Windows Scheduled Task, cron, or
+launchd) to refresh the KPI report weekly. The analyzer is the only piece worth
+automating &mdash; it measures, it never tunes. The companion
+<code>/route-tune</code> skill stays manually run, so a tuning cycle happens
+only when you invoke it, never on a timer.</li>
 </ul>
 </section>
 

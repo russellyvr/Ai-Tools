@@ -47,9 +47,12 @@ printed at the end:
   source — nothing leaves the machine).
 - A model list with at least two price classes so ECONOMY/STANDARD/FRONTIER
   patterns can resolve.
-- Optional: OS scheduler (cron / launchd / Windows Scheduled Task) for a
-  weekly KPI report refresh; the companion route-tune skill for closed-loop
-  tuning.
+- Recommended: an OS scheduler (cron / launchd / Windows Scheduled Task) for a
+  weekly KPI report refresh. The analyzer is the only piece worth automating —
+  it measures, it never tunes.
+- Optional: the companion route-tune skill for closed-loop tuning. It is
+  manually run — a cycle happens only when you invoke `/route-tune`, never on
+  a timer.
 
 ## Layout
 

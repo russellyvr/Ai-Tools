@@ -162,13 +162,16 @@ hard bounds. Components (all under `~\.copilot\routing\`):
   (floor/ceiling per agent type). Targets change only by user decision.
 - `CHANGELOG.md` — append-only log of every tuning action with evidence,
   before/after, revert condition, and VERIFIED/REVERTED status.
-- `/route-tune` skill — the tuning agent. Bounded self-modification: max
+- `/route-tune` skill — the tuning agent, manually run: a cycle happens only
+  when a human invokes it, never on a timer. Bounded self-modification: max
   one pin change (one tier step, within bounds) + one rubric wording
   refinement per cycle; never touches general-purpose/security-review pins,
   the row-7 floor, or the high-stakes override; verifies its previous
   change against the next cycle's KPIs and auto-reverts on regression
   (then 3-cycle cool-down on that change).
-- Weekly scheduled task `CopilotRoutingAnalyzer` keeps the report fresh.
+- A weekly scheduled analyzer run keeps the report fresh — a Task Scheduler
+  task named `CopilotRoutingAnalyzer` on Windows, cron or a launchd agent on
+  macOS/Linux. That job is LLM-free and read-only: it measures, it never tunes.
 
 Feedback signals and their levers:
 - escalation rate > 15% → pins too cheap → raise one class.

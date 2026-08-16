@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>route-tune — bounded self-tuning for Copilot CLI model routing</title>
+<style>
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+:root {
+  --bg:#f5f5f7; --card:#ffffff; --text:#1d1d1f; --secondary:#6e6e73;
+  --border:rgba(0,0,0,0.08); --accent:#0071e3; --accent-soft:rgba(0,113,227,0.10);
+  --good:#34c759; --bad:#ff375f; --warn:#ff9f0a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#f5f5f7; --secondary:#98989d;
+    --border:rgba(255,255,255,0.12); }
+}
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+.wrap { max-width:920px; margin:0 auto; padding:48px 20px 64px; }
+h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+.subline { font-size:14px; color:var(--secondary); margin-bottom:32px; }
+section.panel { background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:20px; margin-bottom:24px; }
+.panel h2 { font-size:17px; font-weight:600; letter-spacing:-0.01em; margin:0 0 4px; }
+.panel .sub { font-size:13px; color:var(--secondary); margin:0 0 14px; }
+.panel p, .panel li { font-size:14px; line-height:1.6; }
+.panel ul, .panel ol { padding-left:22px; margin:10px 0; }
+.scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+  font-weight:600; color:var(--secondary); text-align:left; }
+th, td { padding:8px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
+td.wraps { white-space:normal; }
+.k { font-weight:600; }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:12.5px; background:var(--accent-soft); border-radius:4px; padding:1px 5px; }
+pre { background:var(--accent-soft); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-size:12.5px; line-height:1.5; }
+pre code { background:none; padding:0; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.stat-row { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  margin-bottom:24px; }
+.stat { background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:16px 18px; }
+.stat .v { font-size:24px; font-weight:600; letter-spacing:-0.02em; }
+.stat .l { font-size:12px; color:var(--secondary); margin-top:2px; }
+.good { color:var(--good); } .bad { color:var(--bad); }
+footer { font-size:12px; color:var(--secondary); margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>route-tune</h1>
+<div class="subline">The self-tuning half of a deterministic model-routing deployment for GitHub Copilot CLI. A skill that measures real routing KPIs, applies at most one bounded, logged, reversible change per cycle, verifies it against the next cycle — and reverts itself on regression. Built to help anyone cut LLM token spend without sacrificing output quality, with every design decision traceable to a measurement.</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="v">1</div><div class="l">max autonomous pin change per cycle</div></div>
+  <div class="stat"><div class="v">1</div><div class="l">tier class per pin move, inside hard bounds</div></div>
+  <div class="stat"><div class="v">3</div><div class="l">cycle cool-down after any revert</div></div>
+  <div class="stat"><div class="v">0</div><div class="l">LLM calls in the measurement path</div></div>
+</div>
+
+<section class="panel">
+<h2>What it does</h2>
+<p class="sub">The closed feedback loop: measure &rarr; diagnose &rarr; tune one step &rarr; verify next cycle &rarr; revert on regression.</p>
+<p>Invoke as <code>/route-tune</code> (interactive review) or
+<code>/route-tune go</code> (apply the recommended bounded change autonomously).
+The skill runs the companion deployment's deterministic KPI analyzer, compares
+results to <code>targets.json</code>, maps any breach to exactly one corrective
+lever, applies it within hard limits, logs it, and checks its own previous
+change for regression before doing anything new. If routing is healthy, it
+reports "no change warranted" — re-running without new data changes nothing.</p>
+</section>
+
+<section class="panel">
+<h2>Diagnosis map</h2>
+<p class="sub">Every KPI breach maps to exactly one lever — no free-form tinkering.</p>
+<div class="scroll"><table>
+<tr><th>Signal</th><th>Diagnosis</th><th>Lever</th></tr>
+<tr><td class="wraps">Escalation rate &gt; max</td><td class="wraps">Pins too cheap; work failing at ECONOMY</td><td class="wraps">Raise the offending pin ONE class (within bounds)</td></tr>
+<tr><td class="wraps">Escalation &asymp; 0% for 2+ clean cycles</td><td class="wraps">Headroom to save more</td><td class="wraps">Lower a pin one class or effort one step (within bounds)</td></tr>
+<tr><td class="wraps">ECONOMY share of mechanical dispatches &lt; min</td><td class="wraps">Dispatches overriding pins with expensive models</td><td class="wraps">Refine rubric wording; check skills for mis-pins</td></tr>
+<tr><td class="wraps">Mechanical dispatches &asymp; 0 while the main model does greppy/verbose work</td><td class="wraps">Under-delegation</td><td class="wraps">Adjust the rubric's delegation trigger</td></tr>
+<tr><td class="wraps">Cache-weighted input/turn &gt; max</td><td class="wraps">Context bloat, not a routing problem</td><td class="wraps">Hygiene advice only (targeted reads, delegate verbose output, /clear &middot; /compact cadence)</td></tr>
+<tr><td class="wraps">Frontier cost share &gt; max, driven by the main session</td><td class="wraps">Session default model too expensive</td><td class="wraps"><b>Advise only</b> — the user's session model is never changed autonomously</td></tr>
+</table></div>
+</section>
+
+<section class="panel">
+<h2>Hard limits on self-modification</h2>
+<p class="sub">A self-tuning agent is only trustworthy if its authority is bounded. These bounds are the skill's core design.</p>
+<ul>
+<li>At most <b>one pin change AND one rubric-wording refinement per cycle</b>;
+pin moves are exactly one tier class and must stay inside
+<code>pin_bounds</code> from <code>targets.json</code>.</li>
+<li><b>Untouchable:</b> general-purpose and security-review pins (stay
+<code>inherit</code>), the frontier floor on high-stakes work, the high-stakes
+override, and every non-routing section of the user's configuration.</li>
+<li><b>KPI targets belong to the user</b> — the tuner may never move its own
+goalposts (only the analyzer window and tier name patterns may track a changing
+model list).</li>
+<li><b>Append-only changelog:</b> every change records date, KPI evidence,
+exact before/after, expected effect, and the revert condition.
+<code>settings.json</code> is backed up before any edit.</li>
+<li><b>Verify-and-revert:</b> next cycle, the previous change is marked
+<code>VERIFIED</code> if its KPI improved or held; on regression it is reverted
+exactly, marked <code>REVERTED</code>, and cannot be retried for 3 cycles.</li>
+<li><b>Provenance discipline:</b> user-directed or externally-synced changes
+are logged but exempt from the change budget and revert logic — the heuristic
+never blames a sync for a KPI move it didn't cause.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Prerequisites</h2>
+<p class="sub">route-tune is a tuner, not a standalone tool.</p>
+<ul>
+<li><b>The companion model-routing deployment</b> (separate package: analyzer
+<code>analyze_routing.py</code>, <code>targets.json</code>, the routing spec,
+sub-agent pins in <code>settings.json</code>, and the inline rubric). Install
+it first — route-tune measures and tunes <em>that</em> system.</li>
+<li><b>GitHub Copilot CLI</b> with custom-skill support
+(<code>~/.copilot/skills/</code>).</li>
+<li><b>Python 3.9+</b> on PATH (the analyzer is standard-library only).</li>
+<li>Optional: a weekly scheduled analyzer run (Task Scheduler / launchd / cron)
+so the KPI report is always fresh.</li>
+</ul>
+<p>All measurement is local: the analyzer reads only the CLI's own session
+store under <code>~/.copilot/</code>. Nothing leaves the machine.</p>
+</section>
+
+<section class="panel">
+<h2>Installation</h2>
+<p class="sub">Scripted (recommended) or manual. Installers run as the current user, make no network calls, and never touch your configuration.</p>
+<pre><code># macOS
+./install.sh
+
+# Windows (PowerShell 7+)
+pwsh -File .\install.ps1          # add -WhatIf to preview</code></pre>
+<p>Manual equivalent:</p>
+<pre><code>cp -r skill/route-tune ~/.copilot/skills/route-tune
+# restart the Copilot CLI session, then:
+/route-tune</code></pre>
+<p>Note: paths inside <code>SKILL.md</code> are written as
+<code>%USERPROFILE%\.copilot\&hellip;</code>; on macOS/Linux read them as
+<code>~/.copilot/&hellip;</code>.</p>
+</section>
+
+<section class="panel">
+<h2>Method &amp; cost discipline</h2>
+<p class="sub">How this was built, and what it costs to run.</p>
+<p>This skill exists to keep a token-saving deployment saving tokens without
+anyone having to babysit it — and to do that at effectively zero token cost
+itself. The entire measurement path is LLM-free: the analyzer is
+standard-library Python reading local session data, so a tuning cycle spends
+nothing to find out whether the last change helped. The one-change-per-cycle
+budget, the <code>pin_bounds</code> clamp, the append-only changelog and the
+verify-and-revert rule exist for the same reason — an autonomous tuner that
+drifts is worse than no tuner at all, because it degrades output quality while
+appearing to optimise.</p>
+<p>The self-improvement protocol, its hard limits and the diagnosis map were
+deliberated across an AI council spanning three independent vendors, each
+answering independently before anonymised cross-review:</p>
+<div class="scroll"><table>
+<tr><th>Vendor</th><th>Frontier model</th></tr>
+<tr><td class="k">Anthropic</td><td>Claude Fable 5</td></tr>
+<tr><td class="k">Google</td><td>Gemini 3.1 Pro</td></tr>
+<tr><td class="k">OpenAI</td><td>GPT-5.6 Sol</td></tr>
+</table></div>
+<p>That pass is what produced the &ldquo;cannot game its own metrics&rdquo;
+property: a tuner scored against KPIs it is also allowed to redefine will
+always converge on flattering numbers, so KPI targets were made user-owned and
+untouchable. Claims here are grounded in primary documentation and published
+prior art rather than model recall — the derivations follow.</p>
+</section>
+
+<section class="panel">
+<h2>Sources &amp; derivation</h2>
+<p class="sub">Sound provenance is the point.</p>
+<ul>
+<li><b>Primary source — original iterative engineering.</b> route-tune is the
+self-improvement protocol of model-routing spec v3.x, added after two earlier
+generations failed measurably (v1 hardcoded model names and went stale; v2
+advisory prose showed near-total non-compliance in the event logs). The bounded
+self-modification rules — one change per cycle, verify-and-revert, untouchable
+floors, user-owned targets — came out of a cross-machine peer review between
+two independent live deployments of the same spec. The full lineage, with the
+measurements that forced each change, ships in the companion package's
+<code>instructions/model-routing.md</code>.</li>
+<li><b>Platform:</b> <a href="https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli">GitHub Copilot CLI documentation</a>
+(custom skills, custom instructions, sub-agent model/effort configuration).</li>
+<li><b>Related prior art (context, not derivation):</b>
+<a href="https://arxiv.org/abs/2305.05176">FrugalGPT (arXiv:2305.05176)</a> and
+<a href="https://arxiv.org/abs/2406.18665">RouteLLM (arXiv:2406.18665)</a>
+route by learned difficulty prediction; this system routes by verifiability and
+dispatch surface, and its tuner is deliberately deterministic so it cannot game
+its own metrics.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Repository layout</h2>
+<div class="scroll"><table>
+<tr><th>Path</th><th>Purpose</th></tr>
+<tr><td class="k"><code>skill/route-tune/SKILL.md</code></td><td class="wraps">The tuning skill: assets map, measure &rarr; diagnose &rarr; bounded tune &rarr; verify/revert &rarr; report, cadence</td></tr>
+<tr><td class="k"><code>install.ps1</code></td><td class="wraps">Windows installer (PowerShell 7+, current-user only, backup-first, -WhatIf support)</td></tr>
+<tr><td class="k"><code>install.sh</code></td><td class="wraps">macOS installer (bash 3.2-compatible, current-user only, backup-first)</td></tr>
+<tr><td class="k"><code>docs/index.html</code></td><td class="wraps">This page (GitHub Pages)</td></tr>
+</table></div>
+</section>
+
+<footer>route-tune skill &middot; documentation generated August 2026 &middot;
+all measurements are local; no personal or organizational data is contained in this package.</footer>
+</div>
+</body>
+</html>

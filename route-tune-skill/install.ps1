@@ -79,7 +79,9 @@ if ($PSCmdlet.ShouldProcess($Target, 'Install route-tune skill')) {
     Write-Host '  2. Restart any running GitHub Copilot CLI session.'
     Write-Host '  3. Run an interactive review:      /route-tune'
     Write-Host '     Or apply the recommendation:    /route-tune go'
-    Write-Host '  4. Optional: schedule a weekly analyzer run (Task Scheduler) so'
-    Write-Host '     the KPI report is always fresh, e.g. weekly:'
+    Write-Host '  4. Recommended: schedule the analyzer weekly (Task Scheduler) so the'
+    Write-Host '     KPI report is fresh when you review it. It only measures, never tunes:'
     Write-Host '       python "$HOME\.copilot\routing\analyze_routing.py"'
+    Write-Host '  5. Then run /route-tune once a week and decide what to apply. Nothing'
+    Write-Host '     in this skill runs on its own - it acts only when you invoke it.'
 }

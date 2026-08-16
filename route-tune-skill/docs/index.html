@@ -63,6 +63,7 @@ footer { font-size:12px; color:var(--secondary); margin-top:40px; }
   <div class="stat"><div class="v">1</div><div class="l">tier class per pin move, inside hard bounds</div></div>
   <div class="stat"><div class="v">3</div><div class="l">cycle cool-down after any revert</div></div>
   <div class="stat"><div class="v">0</div><div class="l">LLM calls in the measurement path</div></div>
+  <div class="stat"><div class="v">0</div><div class="l">background processes &mdash; you invoke every cycle</div></div>
 </div>
 
 <section class="panel">
@@ -75,6 +76,32 @@ results to <code>targets.json</code>, maps any breach to exactly one corrective
 lever, applies it within hard limits, logs it, and checks its own previous
 change for regression before doing anything new. If routing is healthy, it
 reports "no change warranted" — re-running without new data changes nothing.</p>
+</section>
+
+<section class="panel">
+<h2 id="how-it-runs">How it runs</h2>
+<p class="sub">You invoke it. It never invokes itself.</p>
+<p>route-tune is a <b>manually run skill</b>. There is no daemon, no watcher and
+no timer &mdash; nothing happens until you type <code>/route-tune</code> in a
+Copilot CLI session. Even <code>/route-tune go</code>, which applies the
+recommended change without stopping to ask, only ever runs because a human
+started it.</p>
+<p>The one piece worth automating is the <b>analyzer</b>: standard-library
+Python, LLM-free, read-only. It measures; it never tunes. Schedule it weekly so
+the KPI report is already fresh when you sit down to review.</p>
+<pre><code># macOS / Linux &mdash; crontab -e, Mondays at 09:00
+0 9 * * 1  python3 "$HOME/.copilot/routing/analyze_routing.py"</code></pre>
+<pre><code># Windows &mdash; PowerShell 7, weekly on Monday
+$a = New-ScheduledTaskAction -Execute 'python' -Argument "`"$HOME\.copilot\routing\analyze_routing.py`""
+$t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At 9am
+Register-ScheduledTask -TaskName 'CopilotRoutingAnalyzer' -Action $a -Trigger $t</code></pre>
+<p>On macOS a launchd agent with a <code>StartCalendarInterval</code> runs the
+same one-line command if you prefer it to cron.</p>
+<p>Then make the review itself the weekly habit: run <code>/route-tune</code>,
+read the KPI table and the single change it proposes, and decide. The
+measurement is automated; the judgement stays yours. When routing is healthy the
+answer is &ldquo;no change warranted&rdquo; and you are done in under a
+minute.</p>
 </section>
 
 <section class="panel">
@@ -127,8 +154,9 @@ it first — route-tune measures and tunes <em>that</em> system.</li>
 <li><b>GitHub Copilot CLI</b> with custom-skill support
 (<code>~/.copilot/skills/</code>).</li>
 <li><b>Python 3.9+</b> on PATH (the analyzer is standard-library only).</li>
-<li>Optional: a weekly scheduled analyzer run (Task Scheduler / launchd / cron)
-so the KPI report is always fresh.</li>
+<li><b>Recommended:</b> a weekly scheduled analyzer run (Task Scheduler /
+launchd / cron) so the KPI report is always fresh &mdash; see
+<a href="#how-it-runs">How it runs</a>. The skill itself stays manual.</li>
 </ul>
 <p>All measurement is local: the analyzer reads only the CLI's own session
 store under <code>~/.copilot/</code>. Nothing leaves the machine.</p>

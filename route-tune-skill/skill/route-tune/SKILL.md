@@ -15,6 +15,11 @@ verify next cycle -> revert on regression.
 Invoke as `/route-tune` (interactive review) or `/route-tune go`
 (apply the recommended bounded change autonomously).
 
+This skill is **manually run**. It has no scheduler, no background process and
+no trigger of its own - a cycle happens only when a human types the command.
+`/route-tune go` skips the confirmation step *within that run*; it does not make
+the skill autonomous.
+
 ## Assets (all under `%USERPROFILE%\.copilot\`)
 
 | Path | Role |
@@ -81,11 +86,17 @@ At the start of each run, check CHANGELOG.md for the most recent change:
 Summarize to the user: KPI table, trend vs last cycle, action taken (or
 "no change warranted"), and any user-only levers (session model choice,
 context hygiene) with expected savings. Keep it under ~200 words unless
-asked for detail.
+asked for detail. End with an explicit recommendation the user can accept or
+decline - the point of the cycle is to surface a decision, not to have already
+made it.
 
 ## Cadence
 
-A Windows scheduled task (`CopilotRoutingAnalyzer`) refreshes the report
-weekly. Run `/route-tune` whenever the user asks about cost, or at least
-weekly. The skill is idempotent - re-running without new data makes no
-change.
+Schedule the *analyzer* weekly so `report-latest.md` is always fresh - a Task
+Scheduler task named `CopilotRoutingAnalyzer` on Windows, cron or a launchd
+agent on macOS/Linux. That job is LLM-free and read-only: it measures, it never
+tunes.
+
+The tuning cycle itself is manual. Run `/route-tune` whenever the user asks
+about cost, or at least weekly once the fresh report has landed. The skill is
+idempotent - re-running without new data makes no change.

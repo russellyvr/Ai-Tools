@@ -71,7 +71,10 @@ Next steps:
   2. Restart any running GitHub Copilot CLI session.
   3. Run an interactive review:      /route-tune
      Or apply the recommendation:    /route-tune go
-  4. Optional: schedule a weekly analyzer run (launchd or cron) so the KPI
-     report is always fresh, e.g. crontab:
+  4. Recommended: schedule the analyzer weekly (cron or launchd) so the KPI
+     report is fresh when you review it. The analyzer only measures - it
+     never tunes. Example crontab entry, Mondays at 09:00:
        0 9 * * 1  python3 "\$HOME/.copilot/routing/analyze_routing.py"
+  5. Then run /route-tune once a week and decide what to apply. Nothing in
+     this skill runs on its own - it acts only when you invoke it.
 EOF

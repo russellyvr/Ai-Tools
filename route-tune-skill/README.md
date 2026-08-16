@@ -13,6 +13,37 @@ provenance, documented below).
 
 Full documentation: [`docs/index.html`](docs/index.html) (GitHub Pages).
 
+## How it runs
+
+route-tune is a **manually run skill**. There is no daemon, no watcher and no
+timer — nothing happens until you type `/route-tune` in a Copilot CLI session.
+Even `/route-tune go`, which applies the recommended change without stopping to
+ask, only ever runs because a human started it.
+
+The one piece worth automating is the **analyzer**: standard-library Python,
+LLM-free, read-only. It measures; it never tunes. Schedule it weekly so the KPI
+report is already fresh when you sit down to review.
+
+```sh
+# macOS / Linux — crontab -e, Mondays at 09:00
+0 9 * * 1  python3 "$HOME/.copilot/routing/analyze_routing.py"
+```
+
+```powershell
+# Windows — PowerShell 7, weekly on Monday
+$a = New-ScheduledTaskAction -Execute 'python' -Argument "`"$HOME\.copilot\routing\analyze_routing.py`""
+$t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At 9am
+Register-ScheduledTask -TaskName 'CopilotRoutingAnalyzer' -Action $a -Trigger $t
+```
+
+On macOS you can use a launchd agent with a `StartCalendarInterval` instead of
+cron; it runs the same one-line command.
+
+Then make the review itself the weekly habit: run `/route-tune`, read the KPI
+table and the single change it proposes, and decide. The measurement is
+automated; the judgement stays yours. When routing is healthy the answer is
+"no change warranted" and you are done in under a minute.
+
 ## Install
 
 ```sh
@@ -39,7 +70,8 @@ macOS/Linux read them as `~/.copilot/…`.
 - GitHub Copilot CLI with custom-skill support (`~/.copilot/skills/`).
 - Python 3.9+ (analyzer is standard-library only; all measurement is local —
   nothing leaves the machine).
-- Optional: weekly scheduled analyzer run (Task Scheduler / launchd / cron).
+- Recommended: a weekly scheduled analyzer run (Task Scheduler / launchd / cron)
+  so the report is fresh when you review it — see [How it runs](#how-it-runs).
 
 ## Hard limits on self-modification
 

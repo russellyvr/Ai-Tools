@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>council — AI Council skill for GitHub Copilot CLI</title>
+<style>
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+:root {
+  --bg:#f5f5f7; --card:#ffffff; --text:#1d1d1f; --secondary:#6e6e73;
+  --border:rgba(0,0,0,0.08); --accent:#0071e3; --accent-soft:rgba(0,113,227,0.10);
+  --good:#34c759; --bad:#ff375f; --warn:#ff9f0a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#f5f5f7; --secondary:#98989d;
+    --border:rgba(255,255,255,0.12); }
+}
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+.wrap { max-width:920px; margin:0 auto; padding:48px 20px 64px; }
+h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+.subline { font-size:14px; color:var(--secondary); margin-bottom:32px; }
+section.panel { background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:20px; margin-bottom:24px; }
+.panel h2 { font-size:17px; font-weight:600; letter-spacing:-0.01em; margin:0 0 4px; }
+.panel .sub { font-size:13px; color:var(--secondary); margin:0 0 14px; }
+.panel p, .panel li { font-size:14px; line-height:1.6; }
+.panel ul, .panel ol { padding-left:22px; margin:10px 0; }
+.scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+  font-weight:600; color:var(--secondary); text-align:left; }
+th, td { padding:8px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
+td.wraps { white-space:normal; }
+.k { font-weight:600; }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:12.5px; background:var(--accent-soft); border-radius:4px; padding:1px 5px; }
+pre { background:var(--accent-soft); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-size:12.5px; line-height:1.5; }
+pre code { background:none; padding:0; }
+.tag { font-size:10px; font-weight:600; color:var(--accent); background:var(--accent-soft);
+  padding:1px 6px; border-radius:980px; vertical-align:middle; margin-left:6px; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.pill { display:inline-block; color:var(--accent); background:var(--accent-soft);
+  border-radius:980px; padding:5px 12px; font-size:13px; }
+.stat-row { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  margin-bottom:24px; }
+.stat { background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:16px 18px; }
+.stat .v { font-size:24px; font-weight:600; letter-spacing:-0.02em; }
+.stat .l { font-size:12px; color:var(--secondary); margin-top:2px; }
+footer { font-size:12px; color:var(--secondary); margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>council</h1>
+<div class="subline">A consensus-gated AI Council skill for GitHub Copilot CLI — three frontier models answer independently, peer-review anonymously, and iterate to a strict all-member verdict with preserved dissent. Published for the general public: frontier-grade, dissent-preserving answers at the lowest defensible token cost, with the method's provenance documented on this page.</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="v">3</div><div class="l">fixed frontier-model seats</div></div>
+  <div class="stat"><div class="v">&ge;90</div><div class="l">agreement score required from every seat</div></div>
+  <div class="stat"><div class="v">2</div><div class="l">max consensus revision checks</div></div>
+  <div class="stat"><div class="v">5</div><div class="l">pipeline stages (intake &rarr; report)</div></div>
+</div>
+
+<section class="panel">
+<h2>What it does</h2>
+<p class="sub">Single-model blind spots, corrected structurally.</p>
+<p>Invoke as <code>/council</code> (or ask for a multi-model opinion, cross-model
+consensus, or a deliberated verdict). The skill convenes three heterogeneous
+frontier models as isolated sub-agents. Each answers the frozen brief
+independently, then anonymously reviews the other two answers against a fixed
+rubric. An orchestrating "clerk" — deliberately barred from judging or answering
+the problem itself — synthesizes a draft and pushes it back to all three seats
+until every seat scores it &ge;90/100, or two revision checks are exhausted.
+The final report always contains a verdict, the strongest surviving dissent,
+and a <em>flip condition</em>: the specific evidence that would reverse the verdict.</p>
+</section>
+
+<section class="panel">
+<h2>The roster</h2>
+<p class="sub">Fixed seats; never substituted. Auxiliary research agents are non-voting.</p>
+<div class="scroll"><table>
+<tr><th>Role</th><th>Model</th><th>Effort</th><th>Session</th></tr>
+<tr><td class="k">Orchestrator (clerk)</td><td>Claude Fable 5</td><td>max</td><td>Main conversation</td></tr>
+<tr><td class="k">Member A</td><td>Claude Fable 5</td><td>max</td><td>Isolated sub-agent</td></tr>
+<tr><td class="k">Member B</td><td>Gemini 3.1 Pro</td><td>high</td><td>Isolated sub-agent</td></tr>
+<tr><td class="k">Member C</td><td>GPT-5.6 Sol</td><td>max</td><td>Isolated sub-agent</td></tr>
+</table></div>
+<p>The orchestrator shares a model family with Member A. This same-model
+conflict is mitigated (anonymization, clerk-only role, peer-only scoring,
+unanimity gate) but not eliminated — it is disclosed in every final report.</p>
+</section>
+
+<section class="panel">
+<h2>Pipeline</h2>
+<p class="sub">Five stages, hard invariants at each.</p>
+<ol>
+<li><b>Stage 0 — Intake gate.</b> The user's ask is compiled into a Council
+Brief (task, ordered criteria, evidence, scope, output form, tool budget) with
+bracketed defaults for every unclear field. Exactly <em>one</em> pushback is
+allowed; then the brief freezes. Later ambiguities become named assumptions or
+flip conditions, never a second interrogation.</li>
+<li><b>Stage 1 — Independent opinions.</b> All three seats launch in one
+response with an identical prompt and a fixed answer contract (ANSWER /
+REASONING / ASSUMPTIONS / STRONGEST COUNTERARGUMENT / FLIP CONDITION /
+CONFIDENCE, &le;1,200 tokens). The roster is never named; peer review is never
+pre-announced.</li>
+<li><b>Stage 2 — Anonymized peer review.</b> One common scrubbed bundle tags
+each answer with an opaque per-run alias. Each member knows only its own alias
+and reviews exactly the other two: rankings, anchored rubric scores, errors,
+ideas worth retaining, self-revisions, and a &le;300-token STATE_CAPSULE that
+carries the seat's decision state forward.</li>
+<li><b>Stage 3 — Consolidation.</b> The clerk builds a claim ledger
+(claim / evidence / support / conflicts) and drafts an attribution-free Draft 0.
+Evidence dominates: peer rankings inform but never mechanically weight; checkable
+claims are verified with local tools.</li>
+<li><b>Stage 4 — Consensus loop.</b> Each seat scores the draft against the
+frozen brief on a fixed schema (AGREEMENT_SCORE / MATERIAL_BLOCKERS /
+REQUIRED_CHANGES_TO_REACH_90 / MAIN_DISSENT / FLIP_CONDITION). Pass = all three
+valid scores &ge;90 — never averaged, inferred, or overridden. Max two checks;
+critiques are corrected, rebutted with tool-verified evidence, or preserved as
+dissent.</li>
+<li><b>Stage 5 — Final report.</b> De-anonymization happens only here. The
+fixed template emits verdict &middot; answer &middot; why &middot; main dissent
+&middot; flip condition &middot; assumptions &middot; convergence status with
+scores &middot; summary table &middot; disclosures, plus an audit manifest.</li>
+</ol>
+</section>
+
+<section class="panel">
+<h2>Design guarantees</h2>
+<p class="sub">Anti-sycophancy and auditability are structural, not aspirational.</p>
+<ul>
+<li><b>Clerk, never judge:</b> the orchestrator never scores member answers and
+never answers the problem itself; peer reviews are the only quality signal.</li>
+<li><b>Anti-sycophancy pairing:</b> a score &ge;90 requires
+<code>MATERIAL_BLOCKERS: none</code>; a score &lt;90 requires concrete
+required changes — vague vetoes and empty praise are both schema-invalid.</li>
+<li><b>Dissent is never lost:</b> a dropped or outvoted seat's last substantive
+objection is preserved in the report; a non-unanimous outcome is reported as
+"not unanimously approved", never papered over.</li>
+<li><b>Evidence-gap governance:</b> a seat that believes missing evidence is
+material returns <code>EVIDENCE_GAP</code> plus a provisional answer; the clerk
+must either augment the packet and rerun, or print the gap as a named assumption
+that every seat scores — never silently arbitrate.</li>
+<li><b>Token discipline:</b> per-stage output caps, batched launches, blocking
+reads (never polling), per-seat prompt budgets, and an end-of-run audit manifest
+recording payload sizes, call counts, scores, and retained dissent.</li>
+<li><b>Failure policy:</b> one retry per failed seat, rehydration prompts
+containing only what a seat was entitled to see, degraded 2-member mode that can
+never claim formal convergence, and a halt on repeated safety refusals.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Prerequisites</h2>
+<p class="sub">What the skill assumes of the host environment.</p>
+<ul>
+<li><b>GitHub Copilot CLI</b> with custom-skill support (skills discovered from
+<code>~/.copilot/skills/&lt;name&gt;/SKILL.md</code>) and an active Copilot
+subscription.</li>
+<li><b>A <code>task</code> (sub-agent) tool</b> able to launch background
+agents with an explicit <code>model</code> and <code>reasoning_effort</code>
+per dispatch, plus blocking reads (<code>read_agent</code>) and follow-up
+messaging (<code>write_agent</code>).</li>
+<li><b>Access to at least three heterogeneous frontier models</b> in the
+session's model list. The shipped roster is Claude Fable 5, Gemini 3.1 Pro,
+and GPT-5.6 Sol; edit the roster table in <code>SKILL.md</code> if your model
+list differs, keeping the models heterogeneous across vendors.</li>
+<li><b>Session-local SQL scratch storage</b> (or equivalent private notes) for
+the alias&harr;identity map, which must stay out of member-visible artifacts
+until Stage 5.</li>
+<li><b>Writable run folder</b> at <code>.copilot/council/&lt;run-id&gt;/</code>
+for the evidence packet, alias-named artifacts, and the audit manifest.</li>
+<li>Optional: a Microsoft-verification skill if Microsoft-related claims must be
+checked during consolidation (the shipped skill references one; remove that line
+if you don't use it).</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Installation</h2>
+<p class="sub">Scripted (recommended) or manual. Installers run as the current user, make no network calls, and never touch your configuration.</p>
+<pre><code># macOS
+./install.sh
+
+# Windows (PowerShell 7+)
+pwsh -File .\install.ps1          # add -WhatIf to preview</code></pre>
+<p>Manual equivalent:</p>
+<pre><code># from this repository root
+cp -r skill/council ~/.copilot/skills/council
+# restart the Copilot CLI session, then:
+/council &lt;your question or decision&gt;</code></pre>
+<p>The skill is self-contained: <code>SKILL.md</code> plus three reference files
+(<code>prompts.md</code>, <code>rubric.md</code>, <code>output-template.md</code>)
+loaded progressively per stage. No external services, network calls, or package
+installs are required beyond the Copilot CLI itself.</p>
+</section>
+
+<section class="panel">
+<h2>Method &amp; cost discipline</h2>
+<p class="sub">How this was built, and what it cost to build it that way.</p>
+<p>Multi-model deliberation is expensive by construction — three frontier seats,
+a cross-review round, and a bounded revision loop. Sustained effort therefore
+went into making it affordable enough to actually run: per-stage output caps,
+batched sub-agent launches, explicit prompt budgets, a clerk that orchestrates
+without ever judging, and an audit manifest that makes every token spent
+attributable after the fact. The token discipline in <code>SKILL.md</code> is a
+first-class part of the design, not housekeeping bolted on afterwards.</p>
+<p>The specification, rubric, and stage prompts were themselves deliberated
+across an AI council spanning three independent vendors — each seat answering
+independently before anonymised cross-review, so that no single model's blind
+spot could quietly become the spec:</p>
+<div class="scroll"><table>
+<tr><th>Vendor</th><th>Frontier model</th></tr>
+<tr><td class="k">Anthropic</td><td>Claude Fable 5</td></tr>
+<tr><td class="k">Google</td><td>Gemini 3.1 Pro</td></tr>
+<tr><td class="k">OpenAI</td><td>GPT-5.6 Sol</td></tr>
+</table></div>
+<p>Claims that could be grounded were grounded in primary documentation and
+published prior art rather than model recall — the derivations are listed
+below, separated into adapted method and original extensions.</p>
+</section>
+
+<section class="panel">
+<h2>Sources &amp; derivation</h2>
+<p class="sub">Where the method comes from.</p>
+<ul>
+<li><b>Andrej Karpathy — llm-council</b>
+(<a href="https://github.com/karpathy/llm-council">github.com/karpathy/llm-council</a>):
+the core method this skill implements — multiple LLMs answer the same query
+independently, anonymously cross-review each other's answers, and a chairman
+model synthesizes the final response. The skill adopts the
+independent-answers &rarr; anonymized-review &rarr; synthesis pipeline directly.</li>
+<li><b>llmcouncil.ai</b>
+(<a href="https://llmcouncil.ai">llmcouncil.ai</a>): the hosted incarnation of
+the same idea; informed the verdict / main-dissent / flip-condition report
+framing.</li>
+<li><b>Original extensions in this skill</b> (not in the sources): the frozen
+single-pushback intake brief; the strict all-seats-&ge;90 consensus gate with a
+bounded two-check revision loop; the clerk-not-judge invariant;
+STATE_CAPSULE seat-state portability across fresh agents; EVIDENCE_GAP
+governance; per-stage token/tool budgets; the audit manifest; and the degraded-run
+and failure-recovery policies. These were developed and hardened iteratively
+through review rounds run <em>by</em> earlier versions of the council itself.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>Repository layout</h2>
+<div class="scroll"><table>
+<tr><th>Path</th><th>Purpose</th></tr>
+<tr><td class="k"><code>skill/council/SKILL.md</code></td><td class="wraps">The skill: roster, invariants, token discipline, 5-stage procedure, failure policy, acceptance tests</td></tr>
+<tr><td class="k"><code>skill/council/references/prompts.md</code></td><td class="wraps">Verbatim prompt templates for every stage (intake echo, round 1, peer review, consensus check, repair, rehydration)</td></tr>
+<tr><td class="k"><code>skill/council/references/rubric.md</code></td><td class="wraps">Peer-review dimensions, agreement-score anchors, gate arithmetic</td></tr>
+<tr><td class="k"><code>skill/council/references/output-template.md</code></td><td class="wraps">Fixed final-report structure and disclosure rules</td></tr>
+<tr><td class="k"><code>install.ps1</code></td><td class="wraps">Windows installer (PowerShell 7+, current-user only, backup-first, -WhatIf support)</td></tr>
+<tr><td class="k"><code>install.sh</code></td><td class="wraps">macOS installer (bash 3.2-compatible, current-user only, backup-first)</td></tr>
+<tr><td class="k"><code>docs/index.html</code></td><td class="wraps">This page (GitHub Pages)</td></tr>
+</table></div>
+</section>
+
+<footer>council skill &middot; documentation generated August 2026 &middot;
+method credit: Karpathy llm-council &middot; no personal or organizational data is contained in this package.</footer>
+</div>
+</body>
+</html>

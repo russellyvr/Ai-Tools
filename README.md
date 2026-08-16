@@ -52,7 +52,7 @@ Significant effort went into that cross-vendor pass specifically because
 single-model design work reads as confident whether or not it is correct.
 
 **Sources over recall.** Every claim that could be grounded was grounded in
-primary vendor documentation and published prior art rather than model memory.
+primary vendor documentation and published prior artifacts rather than model memory.
 Each package lists its own derivations under "Sources & derivation" —
 including which parts are original engineering and which are adapted, with
 links to the upstream work.

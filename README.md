@@ -1,4 +1,4 @@
-# AI Tools
+# Ai Tools
 
 Skills and deployments for agentic command-line AI — built around one idea:
 spend frontier-model tokens only where fidelity actually requires them, and

@@ -6,7 +6,7 @@ Purview which I discovered are not themselves following the specifications
 as they offer 'Microsoft suggests' criteria which skew results against the 
 published standards.
 
-I used the skill to ingest that published standard, the Microsoft Purview 
+I used the skill to ingest the published standard, the Microsoft Purview 
 Report and Evidence, along with supporting evidence.  Then using the Ai Council 
 skill had that evaluated and a gap analysis created - along with an HTML
 dashboard to track progress.

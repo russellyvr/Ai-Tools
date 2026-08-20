@@ -1,5 +1,16 @@
 # evidence-ingest — deterministic closed-corpus ingestion with chain of custody
 
+I built this skill to analyze evidence for CMMC v.2 Level 1 and ISO 27001:2022
+compliance, initially based on Microsoft's compliance assessments within 
+Purview which I discovered are not themselves following the specifications 
+as they offer 'Microsoft suggests' criteria which skew results against the 
+published standards.
+
+I used the skill to ingest that published standard, the Microsoft Purview 
+Report and Evidence, along with supporting evidence.  Then using the Ai Council 
+skill had that evaluated and a gap analysis created - along with an HTML
+dashboard to track progress.
+
 A folder-in, folder-out document ingestion pipeline that turns a directory of
 mixed files into a locked, RAG-ready (Retrieval-Augmented Generation) corpus —
 with a legal-grade provenance record attached to every byte. It ingests

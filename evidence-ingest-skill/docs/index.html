@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>evidence-ingest — deterministic closed-corpus ingestion</title>
+<style>
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+:root {
+  --bg:#f5f5f7; --card:#ffffff; --text:#1d1d1f; --secondary:#6e6e73;
+  --border:rgba(0,0,0,0.08); --accent:#0071e3; --accent-soft:rgba(0,113,227,0.10);
+  --good:#34c759; --bad:#ff375f; --warn:#ff9f0a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#f5f5f7; --secondary:#98989d;
+    --border:rgba(255,255,255,0.12); }
+}
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+.wrap { max-width:920px; margin:0 auto; padding:48px 20px 64px; }
+h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+.subline { font-size:14px; color:var(--secondary); margin-bottom:32px; }
+h2 { font-size:20px; font-weight:600; letter-spacing:-0.01em; margin:40px 0 12px; }
+h3 { font-size:16px; font-weight:600; margin:24px 0 8px; }
+p, li { font-size:15px; line-height:1.55; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:20px 22px; margin:14px 0; }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:13px; background:var(--accent-soft); border-radius:5px; padding:1px 5px; }
+pre { background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:14px 16px; overflow-x:auto; }
+pre code { background:none; padding:0; font-size:13px; line-height:1.5; }
+.tablewrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; margin:12px 0; }
+th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--border);
+  font-size:14px; vertical-align:top; }
+th { color:var(--secondary); font-weight:600; font-size:13px; }
+.badge { display:inline-block; font-size:12px; font-weight:600; border-radius:999px;
+  padding:2px 10px; margin-right:6px; }
+.badge.good { background:rgba(52,199,89,0.15); color:var(--good); }
+.badge.warn { background:rgba(255,159,10,0.15); color:var(--warn); }
+.badge.bad  { background:rgba(255,55,95,0.15); color:var(--bad); }
+.pipeline { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:14px 0; }
+.stage { background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:6px 12px; font-size:13px; font-weight:600; }
+.arrow { color:var(--secondary); font-size:13px; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.footnote { color:var(--secondary); font-size:13px; margin-top:40px;
+  border-top:1px solid var(--border); padding-top:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>evidence-ingest</h1>
+<div class="subline">Deterministic, LLM-free closed-corpus ingestion — folder in,
+locked RAG-ready corpus out, with a legal-grade chain of custody. Ships as an
+agent skill for Claude Code and GitHub Copilot CLI, and as a standalone Python CLI.</div>
+
+<h2>What it does</h2>
+<div class="card">
+<p>Point it at a folder of mixed documents — business records, an email export,
+a research collection, scanned paper — and it produces a published corpus
+folder containing a content-addressed evidence vault, verbatim extraction
+bundles, retrieval-ready text chunks, and a tamper-evident provenance record
+for every byte. The corpus is then filesystem-locked and can be re-verified
+from its own bytes at any time.</p>
+<p>It was built to legal-evidence standards: the same run that ingests ordinary
+documents also produces a defensible chain of custody. You do not pay extra
+for provenance — it is the pipeline's native output.</p>
+</div>
+
+<h2>Why deterministic and LLM-free</h2>
+<p>Every byte that becomes corpus is produced by code, never by a model. Agents
+may orchestrate runs and summarize reports (the control plane), but nothing a
+model writes can enter the work, output, or derived folders (the data plane).</p>
+<ul>
+<li><strong>Reproducibility is the proof.</strong> Every artifact re-derives
+from source bytes and checks hash-for-hash. A model in the data path would make
+the corpus unverifiable.</li>
+<li><strong>Zero hallucination surface.</strong> Extraction is stdlib and
+pure-Python parsing with recorded parse warnings; nothing in the pipeline can
+invent content.</li>
+<li><strong>Model-proof floor.</strong> Better agent models improve
+orchestration for free; the evidentiary path has zero model dependency and can
+never silently degrade as models change.</li>
+</ul>
+
+<h2>Supported input types</h2>
+<div class="tablewrap">
+<table>
+<tr><th>Formats</th><th>Lane</th></tr>
+<tr><td><code>.txt</code> <code>.md</code> <code>.csv</code></td>
+<td>Native text, verbatim. CSV shape recorded; formulas inert.</td></tr>
+<tr><td><code>.html</code> <code>.htm</code></td>
+<td>Deterministic stdlib visible-text extraction. Scripts never executed,
+resources never fetched; excluded blocks counted as parse warnings.</td></tr>
+<tr><td><code>.docx</code> <code>.xlsx</code></td>
+<td>Pure-Python read-only parsers. Formulas stay source text; macros and links
+never execute.</td></tr>
+<tr><td><code>.doc</code> <code>.xls</code></td>
+<td>Preserved verbatim in the vault, marked <code>needs_conversion</code> for
+offline conversion and re-ingest.</td></tr>
+<tr><td><code>.eml</code></td>
+<td>RFC 5322 verbatim headers plus typed recipients.</td></tr>
+<tr><td><code>.pdf</code> <code>.png</code> <code>.jpg</code> <code>.jpeg</code>
+<code>.tif</code> <code>.bmp</code></td>
+<td>OCR lane (cloud or local, below), or preserved verbatim with
+<code>--no-ocr</code> and marked for a later pass. Oversized PDFs are split
+deterministically in-memory and OCR'd per slice.</td></tr>
+</table>
+</div>
+
+<h2>Pipeline</h2>
+<div class="pipeline">
+<span class="stage">selftest</span><span class="arrow">→</span>
+<span class="stage">scan</span><span class="arrow">→</span>
+<span class="stage">ocr</span><span class="arrow">→</span>
+<span class="stage">extract</span><span class="arrow">→</span>
+<span class="stage">chunk</span><span class="arrow">→</span>
+<span class="stage">validate</span><span class="arrow">→</span>
+<span class="stage">merge</span><span class="arrow">→</span>
+<span class="stage">verify</span><span class="arrow">→</span>
+<span class="stage">corpus</span>
+</div>
+<p>Each stage refuses to run without the previous stage's gate. Gate files are
+bound to a hash of the package source code: edit any code and every gate goes
+stale, forcing re-attestation from <code>selftest</code>. There is no skip
+flag. One-shot mode: <code>run --input IN --output OUT --no-ocr</code>.</p>
+
+<h2>Legal provenance — chain of custody</h2>
+<div class="card">
+<ul>
+<li><strong>Hash-chained custody log</strong> (<code>_custody.jsonl</code>):
+every event appends to a tamper-evident sha256 chain — including network
+activity and the enabling of any policy exception.</li>
+<li><strong>Content-addressed vault</strong>: source bytes stored under their
+own sha256; never renamed, rewritten, or normalized.</li>
+<li><strong>Manifest + Merkle seal</strong>: the published corpus carries a
+full manifest and Merkle roots; <code>verify</code> re-derives all of it from
+bytes.</li>
+<li><strong>Drop-record accounting</strong>: every rejected or skipped input is
+recorded with a reason; validation reconciles the counts.</li>
+<li><strong>Immutability</strong>: the published corpus is filesystem-locked
+after merge; derived analytics (Parquet/DuckDB) are rebuildable caches, never
+the authority.</li>
+</ul>
+</div>
+
+<h2>Security mechanisms</h2>
+<div class="card">
+<p><span class="badge good">default-deny</span><strong>Network guard.</strong>
+A socket-layer allowlist installs before any other import. The pipeline can
+reach nothing unless a specific flagged exception admits one host — resolved
+once, IP-pinned, so mid-run DNS repinning cannot redirect evidence bytes.</p>
+<p><span class="badge good">fail-closed</span><strong>Code-tree-hash gates.</strong>
+<code>selftest</code> and <code>validate</code> write gate files keyed to the
+package source hash; later stages refuse without them; any code edit stales
+them all.</p>
+<p><span class="badge warn">adversarial</span><strong>Five-agent red team.</strong>
+Every <code>selftest</code> runs bitrot (corruption), contortionist
+(schema/formula abuse), doppelganger (identity collisions, unicode twins),
+inkwell (content-poisoning canaries), and masquerade (provenance spoofing) —
+40 traps and 18 controls through the real pipeline code against synthetic
+fixtures, never the live corpus.</p>
+<p><span class="badge good">re-derivable</span><strong>Five validation levels.</strong>
+Admission checks, byte integrity, structural re-validation, semantic
+reconciliation, and seal/release — ending in full manifest and Merkle
+re-derivation from source bytes.</p>
+<p><span class="badge bad">never stored</span><strong>Ephemeral credentials.</strong>
+Cloud OCR takes a short-lived bearer token via <code>--token-file</code>
+(0600, deleted on every exit path). The token is never logged; only its sha256
+enters the custody record.</p>
+</div>
+
+<h2>OCR mechanisms</h2>
+<h3>Google Document AI (cloud — documented, audited exception)</h3>
+<p>The only permitted cloud egress, and only when two flags are set together.
+Enabling it writes a <code>cloud_ocr_exception_enabled</code> custody event
+recording the host, pinned IPs, processor path, token-file sha256, and operator
+acknowledgment. Sync-only <code>:process</code> with inline bytes — batch mode
+is refused because it would stage evidence in cloud storage. All identifiers
+below are placeholders; supply your own.</p>
+<pre><code>python -m evidence_ingest ocr --work W --google-docai --allow-cloud-ocr \
+    --project your-gcp-project-id --processor &lt;PROCESSOR_ID&gt; --location us \
+    --token-file "$TMPDIR/docai.token"</code></pre>
+<p><code>docai-run.sh</code> wraps the whole lane: it mints the token via
+<code>gcloud</code> service-account impersonation, passes it by file, and
+deletes it on exit. It ships with empty tenant defaults and refuses to run
+until you supply your own project and service account.</p>
+<h3>Local loopback / enclave (air-gapped alternative)</h3>
+<pre><code>python -m evidence_ingest ocr --work W --endpoint http://127.0.0.1:5000 --allow-loopback-ocr
+# or fully offline:
+python -m evidence_ingest ocr --work W --export DIR    # … OCR elsewhere …
+python -m evidence_ingest ocr --work W --import DIR</code></pre>
+<h3>No OCR</h3>
+<p><code>--no-ocr</code> is always safe: text, tabular, and OOXML ingestion is
+complete and authoritative; PDFs and images are preserved verbatim and marked
+<code>ocr_unavailable</code> for a later pass.</p>
+
+<h2>Prerequisites</h2>
+<ul>
+<li>Python 3.11+ with a virtualenv inside <code>tool/</code>:
+<code>pydantic&gt;=2.5,&lt;3</code> plus <code>python-docx</code> and
+<code>openpyxl</code> (the red-team gate builds OOXML fixtures).</li>
+<li>Optional, for corpus-mode analytics and oversized-PDF splitting:
+<code>pyarrow</code>, <code>duckdb</code>, <code>pandas</code>,
+<code>pypdf</code>.</li>
+<li>For the cloud OCR lane only: the Google Cloud CLI (<code>gcloud</code>)
+and your own Document AI project and processor.</li>
+</ul>
+
+<h2>Installation</h2>
+<pre><code># macOS / Linux — pick your CLI:
+./install.sh --claude      # → ~/.claude/skills/evidence-ingest
+./install.sh --copilot     # → ~/.copilot/skills/evidence-ingest
+
+# Windows (PowerShell 7+):
+pwsh -File .\install.ps1 -Claude     # add -WhatIf to preview
+pwsh -File .\install.ps1 -Copilot</code></pre>
+<p>Installers run as the current user, make no network calls, download nothing,
+and never touch configuration — they copy the skill folder, backup-first.
+Smoke-test everything without OCR or network:</p>
+<pre><code>skill/evidence-ingest/tool/demo/run-demo.sh</code></pre>
+
+<h2>Repository layout</h2>
+<pre><code>evidence-ingest-skill/
+  README.md                    package overview
+  SECURITY.md                  security posture and reporting
+  docs/index.html              this page
+  install.sh / install.ps1     dual-target installers
+  skill/evidence-ingest/
+    SKILL.md                   agent skill definition (both CLIs)
+    tool/
+      ingest.sh / ingest.ps1   launchers (macOS-Linux / Windows)
+      docai-run.sh             Document AI OCR lane wrapper (token mint + run)
+      README.md                deep operator manual
+      pyproject.toml           package metadata
+      demo/                    synthetic corpus + one-command demo
+      evidence_ingest/         the pipeline package (~20 modules + redteam/)</code></pre>
+
+<div class="footnote">MIT licensed (repository-level LICENSE). Exit codes:
+0 ok · 2 gate failure · 3 custody violation · 4 network policy · 5 environment
+unfit.</div>
+
+</div>
+</body>
+</html>

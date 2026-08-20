@@ -27,10 +27,11 @@ The design ideas port to any agentic CLI with per-dispatch model selection.
 | [`model-routing-skill/`](model-routing-skill/) | A deterministic, self-improving model-routing deployment: structural sub-agent model/effort pins, a verifiability-first 7-row routing table, and a standard-library-only KPI analyzer with no LLM in the measurement path. | [README](model-routing-skill/README.md) · [docs](model-routing-skill/docs/index.html) |
 | [`route-tune-skill/`](route-tune-skill/) | The self-tuning half of the above: measures real routing KPIs, applies at most one bounded, logged, reversible change per cycle, verifies it next cycle, and reverts itself on regression. | [README](route-tune-skill/README.md) · [docs](route-tune-skill/docs/index.html) |
 | [`council-skill/`](council-skill/) | A consensus-gated AI Council: three fixed frontier models answer independently, peer-review each other anonymously, and iterate to a strict all-seats verdict that preserves dissent and states its own flip condition. | [README](council-skill/README.md) · [docs](council-skill/docs/index.html) |
+| [`evidence-ingest-skill/`](evidence-ingest-skill/) | A deterministic, LLM-free closed-corpus ingestion pipeline: folder in, locked RAG-ready corpus out, with a hash-chained legal chain of custody, default-deny network guard, fail-closed gates, and a 5-agent adversarial selftest. OCR via Google Document AI (audited exception) or a local loopback container. Installs for both GitHub Copilot CLI and Claude Code. | [README](evidence-ingest-skill/README.md) · [docs](evidence-ingest-skill/docs/index.html) |
 
 `model-routing-skill` and `route-tune-skill` are two halves of one system —
 install model-routing first, since route-tune measures and tunes *that*
-deployment. `council-skill` is independent of both.
+deployment. `council-skill` and `evidence-ingest-skill` are each independent of the rest.
 
 ## Method & cost discipline
 

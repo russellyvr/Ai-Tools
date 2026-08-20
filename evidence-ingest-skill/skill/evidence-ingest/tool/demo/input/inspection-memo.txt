@@ -1,0 +1,12 @@
+SITE INSPECTION MEMO (synthetic demo data)
+
+Date: 2024-11-04
+Author: J. Yates
+Subject: Warehouse 7 inspection findings
+
+Findings:
+1. East loading dock seal degraded; photographs taken.
+2. Sprinkler inspection tag expired 2024-06-30.
+3. Forklift #12 service log missing entries for October.
+
+Action items assigned to facilities; follow-up scheduled 2024-11-18.

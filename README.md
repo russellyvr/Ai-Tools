@@ -36,7 +36,10 @@ platform-neutral — it is a document you hand to any model.
 
 `model-routing-skill` and `route-tune-skill` are two halves of one system —
 install model-routing first, since route-tune measures and tunes *that*
-deployment. `council-skill` and `evidence-ingest-skill` are each independent of the rest.
+deployment. `llm-cost-optimization-playbook` is the reasoning those two
+implement and installs nothing — start there if you want the why before the
+how. `council-skill` and `evidence-ingest-skill` are each independent of the
+rest.
 
 ## Method & cost discipline
 

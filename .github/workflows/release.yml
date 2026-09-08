@@ -18,7 +18,7 @@ jobs:
       - name: Package
         run: |
           mkdir -p dist
-          for pkg in council-skill model-routing-skill route-tune-skill; do
+          for pkg in council-skill model-routing-skill route-tune-skill evidence-ingest-skill; do
             zip -r "dist/${pkg}-${GITHUB_REF_NAME}.zip" "$pkg" LICENSE
           done
 

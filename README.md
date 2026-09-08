@@ -58,14 +58,17 @@ vendors**, not drafted by a single model. Each seat answered independently
 before anonymized cross-review, so no one model's blind spot could quietly
 become the specification:
 
-| Vendor | Frontier model |
+| Vendor | Seat, as filled in August 2026 |
 |---|---|
 | Anthropic | Claude Fable 5 |
 | Google | Gemini 3.1 Pro |
 | OpenAI | GPT-5.6 Sol |
 
-Significant effort went into that cross-vendor pass specifically because
-single-model design work reads as confident whether or not it is correct.
+That table is a dated record of which models deliberated the designs, not a
+current roster — those three were each vendor's deep-reasoning flagship at the
+time, and the vendors have shipped newer ones since. Significant effort went
+into that cross-vendor pass specifically because single-model design work reads
+as confident whether or not it is correct.
 
 **Sources over recall.** Every claim that could be grounded was grounded in
 primary vendor documentation and published prior artifacts rather than model

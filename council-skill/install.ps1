@@ -72,7 +72,7 @@ if ($PSCmdlet.ShouldProcess($Target, 'Install council skill')) {
     Write-Host 'Next steps:'
     Write-Host '  1. Restart any running GitHub Copilot CLI session.'
     Write-Host '  2. Invoke the skill:  /council <your question or decision>'
-    Write-Host '  3. If your model list differs from the shipped roster'
-    Write-Host '     (Claude Fable 5 / Gemini 3.1 Pro / GPT-5.6 Sol), edit the'
-    Write-Host "     roster table in $Target\SKILL.md."
+    Write-Host '  3. Seats resolve at run time to each vendor''s latest'
+    Write-Host '     deep-reasoning flagship (Anthropic / Google / OpenAI) -'
+    Write-Host '     no roster editing needed as model catalogs evolve.'
 }

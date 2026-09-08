@@ -1,10 +1,13 @@
 # council — AI Council skill for GitHub Copilot CLI
 
-Three fixed frontier models (Claude Fable 5, Gemini 3.1 Pro, GPT-5.6 Sol)
-answer a problem independently, anonymously peer-review each other's answers,
+Three fixed vendor seats (Anthropic, Google, OpenAI), each filled at run
+time with the vendor's latest deep-reasoning flagship model, answer a
+problem independently, anonymously peer-review each other's answers,
 then iterate under a clerk orchestrator to strict all-member consensus
 (every seat >= 90/100, max 2 revision checks). Every run ends in a verdict
-with preserved dissent and an explicit flip condition.
+with preserved dissent and an explicit flip condition. No model IDs are
+hard-coded — the roster resolves from the live model catalog per run, so
+the skill needs no editing as catalogs evolve.
 
 Full documentation: [`docs/index.html`](docs/index.html) (GitHub Pages).
 
@@ -39,8 +42,9 @@ cp -r skill/council ~/.copilot/skills/council
 - GitHub Copilot CLI with custom-skill support (`~/.copilot/skills/`).
 - Sub-agent (`task`) tool with per-dispatch `model` + `reasoning_effort`
   selection, blocking reads, and follow-up messaging.
-- Access to at least three heterogeneous frontier models (edit the roster
-  in `SKILL.md` if your model list differs).
+- Access to the deep-reasoning flagship tier of Anthropic, Google, and
+  OpenAI in the session's model list (seats resolve at run time; a vendor
+  with no servable flagship yields a disclosed degraded run).
 - Session-local private scratch storage for the alias↔identity map.
 
 ## Layout
@@ -69,11 +73,15 @@ deliberated across an AI council spanning three independent vendors — each
 seat answering independently before anonymized cross-review, so that no single
 model's blind spot could quietly become the spec:
 
-| Vendor | Frontier model |
+| Vendor | Seat |
 |---|---|
-| Anthropic | Claude Fable 5 |
-| Google | Gemini 3.1 Pro |
-| OpenAI | GPT-5.6 Sol |
+| Anthropic | its deep-reasoning flagship of the day |
+| Google | its deep-reasoning flagship of the day |
+| OpenAI | its deep-reasoning flagship of the day |
+
+Those seats were filled by whichever flagship each vendor was shipping when the
+spec was deliberated (August 2026). The model IDs are deliberately not recorded
+here — the skill pins no model, and neither does its provenance.
 
 Claims that could be grounded were grounded in primary documentation and
 published prior artifacts rather than model recall — the derivations are listed
@@ -84,8 +92,11 @@ below, separated into adapted method and original extensions.
 - **Method:** Andrej Karpathy's [llm-council](https://github.com/karpathy/llm-council)
   (independent answers → anonymized cross-review → chairman synthesis) and
   [llmcouncil.ai](https://llmcouncil.ai).
-- **Extensions original to this skill:** frozen single-pushback intake brief;
+- **Extensions original to this skill:** run-time flagship roster resolution
+  (fixed vendors, no hard-coded model IDs); frozen single-pushback intake brief;
   strict all-seats-≥90 consensus gate with bounded 2-check revision loop;
   clerk-never-judge invariant; STATE_CAPSULE seat-state portability;
-  EVIDENCE_GAP governance; per-stage token/tool budgets; audit manifest;
-  degraded-run and failure-recovery policies.
+  EVIDENCE_GAP governance; mandatory untrusted-content boundary
+  (UNTRUSTED_DATA fencing, least-privilege member tool profiles, mechanical
+  defanging of instruction-shaped text); per-stage token/tool budgets; audit
+  manifest; degraded-run and failure-recovery policies.

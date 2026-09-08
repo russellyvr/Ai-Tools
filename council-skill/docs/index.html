@@ -59,10 +59,10 @@ footer { font-size:12px; color:var(--secondary); margin-top:40px; }
 <body>
 <div class="wrap">
 <h1>council</h1>
-<div class="subline">A consensus-gated AI Council skill for GitHub Copilot CLI — three frontier models answer independently, peer-review anonymously, and iterate to a strict all-member verdict with preserved dissent. Published for the general public: frontier-grade, dissent-preserving answers at the lowest defensible token cost, with the method's provenance documented on this page.</div>
+<div class="subline">A consensus-gated AI Council skill for GitHub Copilot CLI — three fixed vendor seats (Anthropic, Google, OpenAI), each filled at run time with that vendor&rsquo;s latest deep-reasoning flagship, answer independently, peer-review anonymously, and iterate to a strict all-member verdict with preserved dissent. Published for the general public: frontier-grade, dissent-preserving answers at the lowest defensible token cost, with the method's provenance documented on this page.</div>
 
 <div class="stat-row">
-  <div class="stat"><div class="v">3</div><div class="l">fixed frontier-model seats</div></div>
+  <div class="stat"><div class="v">3</div><div class="l">fixed vendor seats — Anthropic &middot; Google &middot; OpenAI</div></div>
   <div class="stat"><div class="v">&ge;90</div><div class="l">agreement score required from every seat</div></div>
   <div class="stat"><div class="v">2</div><div class="l">max consensus revision checks</div></div>
   <div class="stat"><div class="v">5</div><div class="l">pipeline stages (intake &rarr; report)</div></div>
@@ -84,25 +84,32 @@ and a <em>flip condition</em>: the specific evidence that would reverse the verd
 
 <section class="panel">
 <h2>The roster</h2>
-<p class="sub">Fixed seats; never substituted. Auxiliary research agents are non-voting.</p>
+<p class="sub">Three fixed vendors; model IDs resolved at run time. Auxiliary research agents are non-voting.</p>
 <div class="scroll"><table>
-<tr><th>Role</th><th>Model</th><th>Effort</th><th>Session</th></tr>
-<tr><td class="k">Orchestrator (clerk)</td><td>Claude Fable 5</td><td>max</td><td>Main conversation</td></tr>
-<tr><td class="k">Member A</td><td>Claude Fable 5</td><td>max</td><td>Isolated sub-agent</td></tr>
-<tr><td class="k">Member B</td><td>Gemini 3.1 Pro</td><td>high</td><td>Isolated sub-agent</td></tr>
-<tr><td class="k">Member C</td><td>GPT-5.6 Sol</td><td>max</td><td>Isolated sub-agent</td></tr>
+<tr><th>Role</th><th>Vendor (fixed)</th><th>Model</th><th>Effort</th><th>Session</th></tr>
+<tr><td class="k">Orchestrator (clerk)</td><td>(main session model)</td><td>as configured</td><td>max supported</td><td>Main conversation</td></tr>
+<tr><td class="k">Member A</td><td>Anthropic</td><td>resolved at Stage 0</td><td>highest supported</td><td>Isolated sub-agent</td></tr>
+<tr><td class="k">Member B</td><td>Google</td><td>resolved at Stage 0</td><td>highest supported</td><td>Isolated sub-agent</td></tr>
+<tr><td class="k">Member C</td><td>OpenAI</td><td>resolved at Stage 0</td><td>highest supported</td><td>Isolated sub-agent</td></tr>
 </table></div>
-<p>The orchestrator shares a model family with Member A. This same-model
-conflict is mitigated (anonymization, clerk-only role, peer-only scoring,
-unanimity gate) but not eliminated — it is disclosed in every final report.</p>
+<p>No model IDs are hard-coded. At every run, Stage 0 fills each seat with its
+vendor's <em>latest deep-reasoning flagship</em>, resolved from the live model
+catalog (speed/distilled tiers — Flash-, mini-, Haiku-, Codex-class — are never
+eligible). The resolved roster is pinned into the frozen brief, is immutable for
+the run, and is printed in the final report. If the orchestrator shares a model
+family with any seat, that same-model conflict is mitigated (anonymization,
+clerk-only role, peer-only scoring, unanimity gate) but not eliminated — it is
+disclosed in every final report.</p>
 </section>
 
 <section class="panel">
 <h2>Pipeline</h2>
 <p class="sub">Five stages, hard invariants at each.</p>
 <ol>
-<li><b>Stage 0 — Intake gate.</b> The user's ask is compiled into a Council
-Brief (task, ordered criteria, evidence, scope, output form, tool budget) with
+<li><b>Stage 0 — Intake gate.</b> The roster is resolved from the live model
+catalog (latest deep-reasoning flagship per vendor) and pinned. The user's ask
+is compiled into a Council Brief (resolved roster, task, ordered criteria,
+evidence, scope, output form, tool budget) with
 bracketed defaults for every unclear field. Exactly <em>one</em> pushback is
 allowed; then the brief freezes. Later ambiguities become named assumptions or
 flip conditions, never a second interrogation.</li>
@@ -152,6 +159,12 @@ that every seat scores — never silently arbitrate.</li>
 <li><b>Token discipline:</b> per-stage output caps, batched launches, blocking
 reads (never polling), per-seat prompt budgets, and an end-of-run audit manifest
 recording payload sizes, call counts, scores, and retained dissent.</li>
+<li><b>Untrusted-content boundary:</b> everything the orchestrator did not
+author — evidence packets, file excerpts, fetched pages, peer answers — is
+relayed only inside <code>UNTRUSTED_DATA</code> fences carrying a standing
+treat-as-data rule; members run with no shell, file-write, or network tools by
+default; instruction-shaped constructs are mechanically defanged during the
+scrub; embedded instructions become findings, never actions.</li>
 <li><b>Failure policy:</b> one retry per failed seat, rehydration prompts
 containing only what a seat was entitled to see, degraded 2-member mode that can
 never claim formal convergence, and a halt on repeated safety refusals.</li>
@@ -169,10 +182,11 @@ subscription.</li>
 agents with an explicit <code>model</code> and <code>reasoning_effort</code>
 per dispatch, plus blocking reads (<code>read_agent</code>) and follow-up
 messaging (<code>write_agent</code>).</li>
-<li><b>Access to at least three heterogeneous frontier models</b> in the
-session's model list. The shipped roster is Claude Fable 5, Gemini 3.1 Pro,
-and GPT-5.6 Sol; edit the roster table in <code>SKILL.md</code> if your model
-list differs, keeping the models heterogeneous across vendors.</li>
+<li><b>Deep-reasoning flagship models from Anthropic, Google, and OpenAI</b>
+in the session's model list. Seats are filled at run time with each vendor's
+latest flagship, so the skill needs no editing as model catalogs evolve; a
+vendor with no servable flagship produces a disclosed degraded run, never a
+substitution.</li>
 <li><b>Session-local SQL scratch storage</b> (or equivalent private notes) for
 the alias&harr;identity map, which must stay out of member-visible artifacts
 until Stage 5.</li>
@@ -218,11 +232,14 @@ across an AI council spanning three independent vendors — each seat answering
 independently before anonymised cross-review, so that no single model's blind
 spot could quietly become the spec:</p>
 <div class="scroll"><table>
-<tr><th>Vendor</th><th>Frontier model</th></tr>
-<tr><td class="k">Anthropic</td><td>Claude Fable 5</td></tr>
-<tr><td class="k">Google</td><td>Gemini 3.1 Pro</td></tr>
-<tr><td class="k">OpenAI</td><td>GPT-5.6 Sol</td></tr>
+<tr><th>Vendor</th><th>Seat</th></tr>
+<tr><td class="k">Anthropic</td><td>its deep-reasoning flagship of the day</td></tr>
+<tr><td class="k">Google</td><td>its deep-reasoning flagship of the day</td></tr>
+<tr><td class="k">OpenAI</td><td>its deep-reasoning flagship of the day</td></tr>
 </table></div>
+<p>Those seats were filled by whichever flagship each vendor was shipping when
+the spec was deliberated (August 2026). The model IDs are deliberately not
+recorded here — the skill pins no model, and neither does its provenance.</p>
 <p>Claims that could be grounded were grounded in primary documentation and
 published prior artifacts rather than model recall — the derivations are listed
 below, separated into adapted method and original extensions.</p>
@@ -242,11 +259,14 @@ independent-answers &rarr; anonymized-review &rarr; synthesis pipeline directly.
 (<a href="https://llmcouncil.ai">llmcouncil.ai</a>): the hosted incarnation of
 the same idea; informed the verdict / main-dissent / flip-condition report
 framing.</li>
-<li><b>Original extensions in this skill</b> (not in the sources): the frozen
+<li><b>Original extensions in this skill</b> (not in the sources): run-time
+flagship roster resolution (fixed vendors, no hard-coded model IDs); the frozen
 single-pushback intake brief; the strict all-seats-&ge;90 consensus gate with a
 bounded two-check revision loop; the clerk-not-judge invariant;
 STATE_CAPSULE seat-state portability across fresh agents; EVIDENCE_GAP
-governance; per-stage token/tool budgets; the audit manifest; and the degraded-run
+governance; the mandatory untrusted-content boundary (UNTRUSTED_DATA fencing,
+least-privilege member tool profiles, mechanical defanging of instruction-shaped
+text); per-stage token/tool budgets; the audit manifest; and the degraded-run
 and failure-recovery policies. These were developed and hardened iteratively
 through review rounds run <em>by</em> earlier versions of the council itself.</li>
 </ul>
@@ -266,7 +286,7 @@ through review rounds run <em>by</em> earlier versions of the council itself.</l
 </table></div>
 </section>
 
-<footer>council skill &middot; documentation generated August 2026 &middot;
+<footer>council skill &middot; documentation generated September 2026 &middot;
 method credit: Karpathy llm-council &middot; no personal or organizational data is contained in this package.</footer>
 </div>
 </body>

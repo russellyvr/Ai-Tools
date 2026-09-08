@@ -44,9 +44,13 @@ the verdict and make the dissent correct>
 
 Always include:
 
-- **Same-model note (standing, every run):** the orchestrator and Member A
-  share a model family; anonymization, the clerk role, peer-only scoring,
-  and the unanimity gate mitigate but do not eliminate self-preference.
+- **Roster resolution (standing, every run):** the resolved model ID and
+  effort per seat, the resolution method for each (live catalog vs
+  researched-and-requested), and any unfillable seat.
+- **Same-model note (standing, every run):** name any seat whose model
+  family matches the orchestrator's; anonymization, the clerk role,
+  peer-only scoring, and the unanimity gate mitigate but do not eliminate
+  self-preference. If no seat matches, state that explicitly.
 
 Include when applicable:
 

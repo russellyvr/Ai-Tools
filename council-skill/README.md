@@ -73,15 +73,17 @@ deliberated across an AI council spanning three independent vendors — each
 seat answering independently before anonymized cross-review, so that no single
 model's blind spot could quietly become the spec:
 
-| Vendor | Seat |
+| Vendor | Seat, as filled in August 2026 |
 |---|---|
-| Anthropic | its deep-reasoning flagship of the day |
-| Google | its deep-reasoning flagship of the day |
-| OpenAI | its deep-reasoning flagship of the day |
+| Anthropic | Claude Fable 5 |
+| Google | Gemini 3.1 Pro |
+| OpenAI | GPT-5.6 Sol |
 
-Those seats were filled by whichever flagship each vendor was shipping when the
-spec was deliberated (August 2026). The model IDs are deliberately not recorded
-here — the skill pins no model, and neither does its provenance.
+That table is a dated record of who deliberated the spec, not a roster. The
+skill itself pins no model: those three were simply each vendor's
+deep-reasoning flagship at the time, and a council convened today would resolve
+its own seats from the live catalog and reach the same three chairs by a
+different route.
 
 Claims that could be grounded were grounded in primary documentation and
 published prior artifacts rather than model recall — the derivations are listed

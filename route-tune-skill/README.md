@@ -109,13 +109,15 @@ The self-improvement protocol, its hard limits, and the diagnosis map were
 deliberated across an AI council spanning three independent vendors, each
 answering independently before anonymized cross-review:
 
-| Vendor | Frontier model |
+| Vendor | Seat, as filled in August 2026 |
 |---|---|
 | Anthropic | Claude Fable 5 |
 | Google | Gemini 3.1 Pro |
 | OpenAI | GPT-5.6 Sol |
 
-That pass is what produced the "cannot game its own metrics" property: a
+That table is a dated record of which models deliberated the protocol, not a
+current roster — those three were each vendor's deep-reasoning flagship at the
+time. That pass is what produced the "cannot game its own metrics" property: a
 tuner scored against KPIs it is also allowed to redefine will always converge
 on flattering numbers, so KPI targets were made user-owned and untouchable.
 Claims here are grounded in primary documentation and published prior artifacts

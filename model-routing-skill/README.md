@@ -82,13 +82,15 @@ deliberated across an AI council spanning three independent vendors — each
 answering independently before anonymized cross-review — precisely because a
 routing rule that is subtly wrong costs more than the tokens it saves:
 
-| Vendor | Frontier model |
+| Vendor | Seat, as filled in August 2026 |
 |---|---|
 | Anthropic | Claude Fable 5 |
 | Google | Gemini 3.1 Pro |
 | OpenAI | GPT-5.6 Sol |
 
-That cross-vendor pass is also why the KPI denominators are ungameable: a
+That table is a dated record of which models deliberated the design, not a
+current roster — those three were each vendor's deep-reasoning flagship at the
+time. That cross-vendor pass is also why the KPI denominators are ungameable: a
 single-model design tends to grade its own homework, and the peer review is
 what caught it. Claims here are grounded in primary vendor documentation and
 published prior artifacts rather than model recall — the derivations follow, with

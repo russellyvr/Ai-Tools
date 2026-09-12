@@ -8,8 +8,7 @@ Only the latest release is supported. Older releases receive no fixes.
 
 Please report vulnerabilities privately — do not open a public issue.
 
-- Preferred: [Report a vulnerability](https://github.com/russellyvr/Ai-Tools/security/advisories/new) via GitHub private vulnerability reporting.
-- Fallback: email 32231838+russellyvr@users.noreply.github.com with "SECURITY Ai-Tools" in the subject.
+- [Report a vulnerability](https://github.com/russellyvr/Ai-Tools/security/advisories/new) via GitHub private vulnerability reporting.
 
 You can expect an acknowledgement within 7 days. Please include steps to reproduce and the commit or release version affected.
 

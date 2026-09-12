@@ -12,7 +12,9 @@ publication approval under the rubric, never established accuracy.
 
 **Revision 1.2.0 (2026-09-12):** the specification was reviewed by a council
 of the three vendors' current flagships and revised in thirteen places —
-see [`CHANGELOG.md`](CHANGELOG.md).
+see [`CHANGELOG.md`](CHANGELOG.md). **1.2.2:** the review's one preserved
+dissent (an enforced, not declared, tool-free profile for every seat) is
+resolved in the reference implementation.
 
 Full documentation: [`docs/index.html`](docs/index.html) (GitHub Pages).
 

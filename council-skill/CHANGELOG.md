@@ -1,5 +1,21 @@
 # Changelog — council-skill
 
+## 1.2.2 — 2026-09-12 — the preserved dissent is resolved in the reference implementation
+
+The OpenAI seat's unresolved blocker from the 1.2.0 review (R1: a
+"packet-only" profile declared in prose is not enforcement) is closed in
+the author's reference implementation. The Google seat's CLI transport was
+measured and found unable to enforce a tool-free profile in headless mode
+(57 tools exposed, including shell and file writes; its sandbox and plan
+flags do not stop them), so under this skill's own failure policy that
+seat was unfillable for closed-book stages. The seat now runs on the
+vendor's API, where the request body carries no tool definitions on
+closed-book stages and only the vendor's search tool on research briefs —
+enforcement by request body, as R1 asked. The specification text in this
+package already required exactly that; the change is recorded here so the
+dissent's disposition is not lost. Housekeeping in the same pass: the
+auth gate no longer types a model id anywhere.
+
 ## 1.2.0 — 2026-09-12 — the council reviews its own specification
 
 On 12 September 2026 this skill's specification was put before a council of
@@ -70,7 +86,8 @@ the OpenAI seat's request that any prose-declared "packet-only" profile be
 treated as an outright protocol failure rather than a disclosed downscale.
 The skill now makes such a seat unfillable for research mode and requires
 an enforced tool-free profile for closed-book stages; where a platform
-cannot provide one, the report says so.
+cannot provide one, the report says so. (Resolved in the reference
+implementation on the same day — see 1.2.2 above.)
 
 ### Sources consulted for the 2026-09-12 review
 

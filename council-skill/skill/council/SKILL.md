@@ -13,8 +13,11 @@ with verdict / main dissent / flip condition). Note on terms: mechanical
 scrubbing is identity MASKING, not anonymity; a passing gate means
 unanimous publication approval under the rubric, not established truth.
 The council's incremental accuracy over a single grounded frontier model
-has not been measured — never describe approval as accuracy (see
-Acceptance tests, paired evaluation).
+has been measured once (paired-evaluation pilot 1, 2026-09-12, nine
+briefs: no gain was measurable because the single model was already
+right every time; the council's demonstrated value was catching seat
+errors in review) — never describe approval as accuracy (see Acceptance
+tests, paired evaluation, and `EVALUATION.md`).
 
 Revision 2026-09-12: this specification was itself reviewed by a council
 of the three vendors' current flagships; change markers `[C-n]` refer to
@@ -472,6 +475,9 @@ not cost.
   versus stateful checks and categorical versus numeric gates as separate
   arms; metrics: factual and citation errors, correct-to-wrong and
   wrong-to-correct changes, false approvals, false vetoes, latency. [C-11]
+  Pilot 1 (2026-09-12, `EVALUATION.md`) ran arms S/C/P/K1/K2 on nine
+  briefs; the fresh-versus-stateful and categorical-versus-numeric arms
+  have not yet run.
 
 ## Reference loading (progressive disclosure)
 

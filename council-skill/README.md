@@ -72,6 +72,7 @@ cp -r skill/council ~/.copilot/skills/council
 | `skill/council/references/output-template.md` | Fixed final-report structure and disclosures |
 | `skill/council/references/harness-template.md` | Platform-neutral transport and tool-profile bindings to fill in before the first run |
 | `CHANGELOG.md` | Dated change history, including the 2026-09-12 council self-review |
+| `EVALUATION.md` | Paired-evaluation pilot 1 (2026-09-12): design, per-brief results, what the numbers do and do not show |
 | `install.ps1` / `install.sh` | Current-user, backup-first installers (Windows PS7 / macOS bash) |
 | `docs/index.html` | GitHub Pages documentation |
 

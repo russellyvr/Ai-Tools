@@ -88,8 +88,9 @@ Always include:
 - **Identity-masking limits:** mechanical scrubbing is identity MASKING,
   not anonymity; a passing gate means unanimous publication approval
   under the rubric, not established truth; the council's accuracy over a
-  single grounded model is unmeasured until the paired-evaluation fixture
-  exists. [C-11]
+  single grounded model was measured once (pilot 1, 2026-09-12: no gain on
+  nine briefs the single model already answered correctly) and remains
+  unproven on harder briefs. [C-11]
 - **Manifest path** and the score-history line written. [C-10]
 
 Include when applicable:

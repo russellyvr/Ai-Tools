@@ -130,8 +130,7 @@ Per brief (K2 column: verdicts at the final check, Anthropic / Google / OpenAI):
   it.
 - **Fixture.** Nine labelled briefs, the arm design above, a score sheet
   and an aggregator ship under `fixtures/paired-eval/` in the reference
-  implementation; the answers remain marked as not yet confirmed by the
-  owner.
+  implementation; the owner confirmed all nine answers on 2026-09-12.
 
 ## What this pilot does not show
 
@@ -140,5 +139,5 @@ grounded frontier model; on these briefs it could not, because the single
 model was already right every time. It does not measure fresh-context
 versus stateful checks or the categorical versus numeric gate, which
 remain separate arms for a later run. The answers were labelled by the
-orchestrator from tool-verified sources and are not yet owner-confirmed,
-so every row in the score sheet is provisional.
+orchestrator from tool-verified sources and confirmed by the owner on
+2026-09-12.

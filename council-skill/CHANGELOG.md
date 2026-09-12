@@ -7,8 +7,10 @@ the three vendors' current flagships — **Claude Fable 5.1** (Anthropic),
 **Gemini 3.1 Pro** (Google), **GPT-6 Astra** (OpenAI) — with a
 deep-research evidence packet: the original Karpathy llm-council source,
 current Anthropic / OpenAI / Google documentation on multi-agent
-orchestration, LLM-as-judge and deep research, and 26 peer-reviewed papers
-on multi-agent debate, ensembles, judge bias and refinement loops. The
+orchestration, LLM-as-judge and deep research, and 25 peer-reviewed papers
+on multi-agent debate, ensembles, judge bias and refinement loops (all
+listed under *Sources consulted* below, with the further papers the seats
+themselves cited and the orchestrator verified). The
 verdict was **REVISE**, not unanimously approved after two checks
 (diagnostic agreement 93 / 96 / 88). The main dissent, from the OpenAI seat,
 is preserved: unanimity is a defensible publication policy but not a
@@ -69,6 +71,94 @@ treated as an outright protocol failure rather than a disclosed downscale.
 The skill now makes such a seat unfillable for research mode and requires
 an enforced tool-free profile for closed-book stages; where a platform
 cannot provide one, the report says so.
+
+### Sources consulted for the 2026-09-12 review
+
+Everything below is public. Vendor pages were fetched on 2026-09-12; every
+paper was resolved by identifier on Semantic Scholar the same day. The
+evidence packet itself and the run transcripts are not published.
+
+**Original provenance**
+
+- Andrej Karpathy, llm-council — https://github.com/karpathy/llm-council
+  (README, `backend/council.py`, `backend/config.py`)
+- llmcouncil.ai — https://llmcouncil.ai
+
+**Vendor documentation**
+
+- Anthropic, "Building effective agents" — https://www.anthropic.com/engineering/building-effective-agents
+- Anthropic, "How we built our multi-agent research system" — https://www.anthropic.com/engineering/multi-agent-research-system
+- Anthropic, "Mitigate jailbreaks and prompt injections" — https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
+- Anthropic, Claude Code subagents — https://code.claude.com/docs/en/sub-agents
+- Anthropic, Claude models overview — https://platform.claude.com/docs/en/about-claude/models/overview
+- OpenAI, Reasoning best practices — https://developers.openai.com/api/docs/guides/reasoning
+- OpenAI, Evaluation best practices — https://developers.openai.com/api/docs/guides/evaluation-best-practices
+- OpenAI, Conversation state — https://developers.openai.com/api/docs/guides/conversation-state
+- OpenAI, Background mode — https://developers.openai.com/api/docs/guides/background
+- OpenAI, Deep research — https://developers.openai.com/api/docs/guides/deep-research
+- OpenAI, Agent builder safety — https://developers.openai.com/api/docs/guides/agent-builder-safety
+- OpenAI, Responses API reference (create) — https://developers.openai.com/api/reference/cli/resources/responses/methods/create
+- OpenAI, Models — https://developers.openai.com/api/docs/models
+- OpenAI Agents SDK, Orchestrating multiple agents — https://openai.github.io/openai-agents-python/multi_agent/
+- Google, Gemini API thinking — https://ai.google.dev/gemini-api/docs/thinking
+- Google, Gemini Deep Research agent — https://ai.google.dev/gemini-api/docs/deep-research
+- Google, Gemini models — https://ai.google.dev/gemini-api/docs/models
+- Google, Gemini 3.8 Flash announcement — https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/
+- Google, I/O 2026 developer highlights — https://blog.google/innovation-and-ai/technology/developers-tools/google-io-2026-developer-highlights/
+- Google ADK, Workflow agents — https://adk.dev/agents/workflow-agents/
+- Google, "A developer's guide to multi-agent patterns in ADK" — https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
+- Antigravity CLI, Headless mode — https://antigravity.google/docs/cli/headless/
+- Artificial Analysis, Gemini 3.8 Flash vs Gemini 3.1 Pro — https://artificialanalysis.ai/models/comparisons/gemini-3-8-flash-vs-gemini-3-1-pro-preview
+
+**Peer-reviewed and preprint literature in the evidence packet (25)**
+
+Multi-agent debate
+- Du et al. 2023, "Improving Factuality and Reasoning in Language Models through Multiagent Debate" (ICML 2024) — https://arxiv.org/abs/2305.14325
+- Liang et al. 2023, "Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate" — https://arxiv.org/abs/2305.19118
+- Zhou & Chen 2025, "Adaptive heterogeneous multi-agent debate for enhanced educational and factual reasoning in large language models" — https://doi.org/10.1007/s44443-025-00353-3
+- Smit et al. 2023, "Should we be going MAD? A Look at Multi-Agent Debate Strategies for LLMs" (ICML 2024) — https://arxiv.org/abs/2311.17371
+- Yao et al. 2025, "Peacemaker or Troublemaker: How Sycophancy Shapes Multi-Agent Debate" — https://arxiv.org/abs/2509.23055
+- Hao et al. 2026, "Not All Flips Are Conformity: Decomposing Stance Convergence in Multi-Agent LLM Debate" — https://arxiv.org/abs/2606.00820
+
+Ensembles and heterogeneity
+- Wang et al. 2024, "Mixture-of-Agents Enhances Large Language Model Capabilities" — https://arxiv.org/abs/2406.04692
+- Li et al. 2025, "Rethinking Mixture-of-Agents: Is Mixing Different Large Language Models Beneficial?" — https://arxiv.org/abs/2502.00674
+- Chen 2026, "When Does Combining Language Models Help? A Co-Failure Ceiling on Routing, Voting, and Mixture-of-Agents Across 67 Frontier Models" — https://arxiv.org/abs/2606.27288
+- Ali 2026, "Quantifying Diversity of Thought: A Predictive Law of Weighted LLM Ensemble Lift" — https://arxiv.org/abs/2607.17384
+
+LLM-as-judge bias and scoring
+- Zheng et al. 2023, "Judging LLM-as-a-judge with MT-Bench and Chatbot Arena" — https://arxiv.org/abs/2306.05685
+- Panickssery et al. 2024, "LLM Evaluators Recognize and Favor Their Own Generations" — https://arxiv.org/abs/2404.13076
+- Koo et al. 2023, "Benchmarking Cognitive Biases in Large Language Models as Evaluators" — https://arxiv.org/abs/2309.17012
+- Li et al. 2023, "PRD: Peer Rank and Discussion Improve Large Language Model based Evaluations" — https://arxiv.org/abs/2307.02762
+- Tripathi et al. 2025, "Pairwise or Pointwise? Evaluating Feedback Protocols for Bias in LLM-Based Evaluation" — https://arxiv.org/abs/2504.14716
+- Acharya et al. 2026, "RoPoLL: Robust Panel of LLM Judges" — https://arxiv.org/abs/2606.30931
+
+Refinement and self-correction
+- Madaan et al. 2023, "Self-Refine: Iterative Refinement with Self-Feedback" — https://arxiv.org/abs/2303.17651
+- Huang et al. 2023, "Large Language Models Cannot Self-Correct Reasoning Yet" — https://arxiv.org/abs/2310.01798
+- Gou et al. 2023, "CRITIC: Large Language Models Can Self-Correct with Tool-Interactive Critiquing" — https://arxiv.org/abs/2305.11738
+- Shinn et al. 2023, "Reflexion: Language Agents with Verbal Reinforcement Learning" — https://arxiv.org/abs/2303.11366
+
+Councils, juries and panels
+- Verga et al. 2024, "Replacing Judges with Juries: Evaluating LLM Generations with a Panel of Diverse Models" — https://arxiv.org/abs/2404.18796
+- Shaikh et al. 2025, "Collaborative intelligence in AI: Evaluating the performance of a council of AIs on the USMLE" — https://doi.org/10.1371/journal.pdig.0000787
+- Sela 2026, "Preserving Disagreement: Architectural Heterogeneity and Coherence Validation in Multi-Agent Policy Simulation" — https://arxiv.org/abs/2604.26561
+
+Deep research and citation faithfulness
+- Hirsch et al. 2026, "Who is the Agent to Blame? Localizing Faithfulness and Citation Mistakes in Agentic Deep Research" — https://arxiv.org/abs/2608.24306
+- Rao et al. 2026, "Detecting and Correcting Reference Hallucinations in Commercial LLMs and Deep Research Agents" — https://arxiv.org/abs/2604.03173
+
+**Further papers cited by the seats during the review and verified by the orchestrator (8)**
+
+- Kapetanović 2026, "Anchoring Bias in LLM-as-a-Judge Systems: Prior Scores Compromise Evaluation Independence" — https://arxiv.org/abs/2608.25869
+- Choi et al. 2025, "Debate or Vote: Which Yields Better Decisions in Multi-Agent Large Language Models?" — https://arxiv.org/abs/2508.17536
+- Chen, Saha & Bansal 2023, "ReConcile: Round-Table Conference Improves Reasoning via Consensus among Diverse LLMs" — https://arxiv.org/abs/2309.13007
+- Zhang et al. 2025, "Stop Overvaluing Multi-Agent Debate — We Must Rethink Evaluation and Embrace Model Heterogeneity" — https://arxiv.org/abs/2502.08788
+- Norman et al. 2026, "Reliability without Validity: A Systematic, Large-Scale Evaluation of LLM-as-a-Judge Models Across Agreement, Consistency, and Bias" — https://arxiv.org/abs/2606.19544
+- Thakur et al. 2024, "Judging the Judges: Evaluating Alignment and Vulnerabilities in LLMs-as-Judges" — https://arxiv.org/abs/2406.12624
+- Yang et al. 2026, "Quantifying and Mitigating Self-Preference Bias of LLM Judges" — https://arxiv.org/abs/2604.22891
+- Chen et al. 2025, "When and Why Does Multi-Agent Debate Fail and Does It Really Underperform?" — https://arxiv.org/abs/2510.20963
 
 ## 1.1.x — 2026-09-08
 

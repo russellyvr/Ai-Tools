@@ -94,8 +94,8 @@ skill itself pins no model: each row lists what the vendors' catalogs offered
 on that date, and a council convened today would resolve its own seats from
 the live catalog. The September review ran with a deep-research evidence
 packet — the original llm-council source, current vendor documentation on
-multi-agent orchestration, LLM-as-judge and deep research, and 26
-peer-reviewed papers — and each seat's own web research where its transport
+multi-agent orchestration, LLM-as-judge and deep research, and 25
+peer-reviewed papers (all linked in `CHANGELOG.md`) — and each seat's own web research where its transport
 allowed it; the review's own transport incidents (a seat losing web access, a
 seat exhausting its output cap on reasoning, a lost conversation resume)
 became changes C-8 and C-9.

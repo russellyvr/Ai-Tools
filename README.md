@@ -20,9 +20,15 @@ playbook itself, and is read by a model rather than deployed.
 
 Target platform for the installable packages: **GitHub Copilot CLI** (custom
 skills in `~/.copilot/skills/`, global custom instructions, and
-`settings.json → subagents.agents` model pins). The design ideas port to any
-agentic CLI with per-dispatch model selection. The playbook entry is
-platform-neutral — it is a document you hand to any model.
+`settings.json → subagents.agents` model pins). The routing packages are bound
+to those Copilot mechanisms by construction. The council skill is written
+against Copilot's sub-agent tool verbs and run folder, with its transport and
+tool-profile bindings isolated in one platform-neutral template
+(`council-skill/skill/council/references/harness-template.md`), so the
+procedure ports by re-binding four verbs. `evidence-ingest-skill` installs for
+both Copilot CLI and Claude Code. The design ideas port to any agentic CLI with
+per-dispatch model selection. The playbook entry is platform-neutral — it is a
+document you hand to any model.
 
 ## Entries
 

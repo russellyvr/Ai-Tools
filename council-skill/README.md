@@ -120,13 +120,29 @@ below, separated into adapted method and original extensions.
   defanging of instruction-shaped text); per-stage token/tool budgets and
   run ceilings; audit manifest and score history; paired-evaluation fixture;
   degraded-run and failure-recovery policies.
-- **Evidence behind the 2026-09-12 revision (public sources):** Anthropic,
-  "Building effective agents" and "How we built our multi-agent research
-  system"; Anthropic platform guidance on mitigating prompt injection; OpenAI
-  evaluation best practices, Responses API reference and deep-research guide;
-  Google ADK multi-agent patterns and Gemini model documentation; and among
-  the papers, Du et al. 2023 (multi-agent debate), Verga et al. 2024 (panel of
-  LLM judges), Panickssery et al. 2024 (self-preference), Tripathi et al. 2025
-  (pairwise vs pointwise judging), Yao et al. 2025 (sycophancy in debate),
-  Li et al. 2025 (Self-MoA), Hirsch et al. 2026 (error origin in deep-research
-  pipelines), Acharya et al. 2026 (robust panels of judges).
+- **Evidence behind the 2026-09-12 revision** — the complete linked list (23
+  vendor pages, 25 packet papers, 8 seat-cited papers) is in
+  [`CHANGELOG.md`](CHANGELOG.md#sources-consulted-for-the-2026-09-12-review);
+  the load-bearing items:
+  - Anthropic — [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents);
+    [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system);
+    [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)
+  - OpenAI — [Evaluation best practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices);
+    [Responses API reference](https://developers.openai.com/api/reference/cli/resources/responses/methods/create);
+    [Conversation state](https://developers.openai.com/api/docs/guides/conversation-state);
+    [Deep research](https://developers.openai.com/api/docs/guides/deep-research);
+    [Agent builder safety](https://developers.openai.com/api/docs/guides/agent-builder-safety)
+  - Google — [Multi-agent patterns in ADK](https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/);
+    [ADK workflow agents](https://adk.dev/agents/workflow-agents/);
+    [Gemini models](https://ai.google.dev/gemini-api/docs/models);
+    [I/O 2026 developer highlights](https://blog.google/innovation-and-ai/technology/developers-tools/google-io-2026-developer-highlights/)
+  - Papers — Du et al. 2023, [multi-agent debate](https://arxiv.org/abs/2305.14325);
+    Verga et al. 2024, [panel of LLM judges](https://arxiv.org/abs/2404.18796);
+    Panickssery et al. 2024, [self-preference in LLM evaluators](https://arxiv.org/abs/2404.13076);
+    Tripathi et al. 2025, [pairwise vs pointwise judging](https://arxiv.org/abs/2504.14716);
+    Yao et al. 2025, [sycophancy in multi-agent debate](https://arxiv.org/abs/2509.23055);
+    Li et al. 2025, [Self-MoA](https://arxiv.org/abs/2502.00674);
+    Hirsch et al. 2026, [error origin in deep-research pipelines](https://arxiv.org/abs/2608.24306);
+    Acharya et al. 2026, [robust panels of LLM judges](https://arxiv.org/abs/2606.30931);
+    Kapetanović 2026, [anchoring bias in LLM-as-a-judge](https://arxiv.org/abs/2608.25869);
+    Chen, Saha & Bansal 2023, [ReConcile](https://arxiv.org/abs/2309.13007).

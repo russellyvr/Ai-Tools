@@ -212,7 +212,8 @@ cp -r skill/council ~/.copilot/skills/council
 # restart the Copilot CLI session, then:
 /council &lt;your question or decision&gt;</code></pre>
 <p>The skill is self-contained: <code>SKILL.md</code> plus three reference files
-(<code>prompts.md</code>, <code>rubric.md</code>, <code>output-template.md</code>)
+(<code>prompts.md</code>, <code>rubric.md</code>, <code>output-template.md</code>,
+<code>harness-template.md</code>)
 loaded progressively per stage. No external services, network calls, or package
 installs are required beyond the Copilot CLI itself.</p>
 </section>
@@ -232,16 +233,18 @@ across an AI council spanning three independent vendors — each seat answering
 independently before anonymised cross-review, so that no single model's blind
 spot could quietly become the spec:</p>
 <div class="scroll"><table>
-<tr><th>Vendor</th><th>Seat, as filled in August 2026</th></tr>
-<tr><td class="k">Anthropic</td><td>Claude Fable 5</td></tr>
-<tr><td class="k">Google</td><td>Gemini 3.1 Pro</td></tr>
-<tr><td class="k">OpenAI</td><td>GPT-5.6 Sol</td></tr>
+<tr><th>Deliberation</th><th>Date</th><th>Anthropic</th><th>Google</th><th>OpenAI</th><th>Outcome</th></tr>
+<tr><td class="k">Original specification</td><td>August 2026</td><td>Claude Fable 5</td><td>Gemini 3.1 Pro</td><td>GPT-5.6 Sol</td><td class="wraps">adopted with revisions</td></tr>
+<tr><td class="k">Self-review of this specification</td><td>12 September 2026</td><td>Claude Fable 5.1</td><td>Gemini 3.1 Pro</td><td>GPT-6 Astra</td><td class="wraps">REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in <code>CHANGELOG.md</code></td></tr>
 </table></div>
-<p>That table is a dated record of who deliberated the spec, not a roster. The
-skill itself pins no model: those three were simply each vendor's
-deep-reasoning flagship at the time, and a council convened today would resolve
-its own seats from the live catalog and reach the same three chairs by a
-different route.</p>
+<p>Those rows are a dated record of who deliberated the spec, not a roster. The
+skill itself pins no model: each row lists what the vendors' catalogs offered on
+that date, and a council convened today would resolve its own seats from the
+live catalog. The September review ran with a deep-research evidence packet
+(the original llm-council source, current vendor documentation, 26 peer-reviewed
+papers) and each seat's own web research where its transport allowed it; the
+review's own transport incidents became changes C-8 and C-9 of the
+<a href="../CHANGELOG.md">changelog</a>.</p>
 <p>Claims that could be grounded were grounded in primary documentation and
 published prior artifacts rather than model recall — the derivations are listed
 below, separated into adapted method and original extensions.</p>
@@ -282,6 +285,8 @@ through review rounds run <em>by</em> earlier versions of the council itself.</l
 <tr><td class="k"><code>skill/council/references/prompts.md</code></td><td class="wraps">Verbatim prompt templates for every stage (intake echo, round 1, peer review, consensus check, repair, rehydration)</td></tr>
 <tr><td class="k"><code>skill/council/references/rubric.md</code></td><td class="wraps">Peer-review dimensions, agreement-score anchors, gate arithmetic</td></tr>
 <tr><td class="k"><code>skill/council/references/output-template.md</code></td><td class="wraps">Fixed final-report structure and disclosure rules</td></tr>
+<tr><td class="k"><code>skill/council/references/harness-template.md</code></td><td class="wraps">Platform-neutral transport and tool-profile bindings to fill in before the first run (added 2026-09-12)</td></tr>
+<tr><td class="k"><code>CHANGELOG.md</code></td><td class="wraps">Dated change history, including the 2026-09-12 council self-review</td></tr>
 <tr><td class="k"><code>install.ps1</code></td><td class="wraps">Windows installer (PowerShell 7+, current-user only, backup-first, -WhatIf support)</td></tr>
 <tr><td class="k"><code>install.sh</code></td><td class="wraps">macOS installer (bash 3.2-compatible, current-user only, backup-first)</td></tr>
 <tr><td class="k"><code>docs/index.html</code></td><td class="wraps">This page (GitHub Pages)</td></tr>

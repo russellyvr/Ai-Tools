@@ -30,7 +30,7 @@ platform-neutral — it is a document you hand to any model.
 |---|---|---|
 | [`model-routing-skill/`](model-routing-skill/) | A deterministic, self-improving model-routing deployment: structural sub-agent model/effort pins, a verifiability-first 7-row routing table, and a standard-library-only KPI analyzer with no LLM in the measurement path. | [README](model-routing-skill/README.md) · [docs](model-routing-skill/docs/index.html) |
 | [`route-tune-skill/`](route-tune-skill/) | The self-tuning half of the above: measures real routing KPIs, applies at most one bounded, logged, reversible change per cycle, verifies it next cycle, and reverts itself on regression. | [README](route-tune-skill/README.md) · [docs](route-tune-skill/docs/index.html) |
-| [`council-skill/`](council-skill/) | A consensus-gated AI Council: three fixed vendor seats (Anthropic, Google, OpenAI), each filled at run time with that vendor's latest deep-reasoning flagship, answer independently, peer-review each other anonymously, and iterate to a strict all-seats verdict that preserves dissent and states its own flip condition. | [README](council-skill/README.md) · [docs](council-skill/docs/index.html) |
+| [`council-skill/`](council-skill/) | A consensus-gated AI Council: three fixed vendor seats (Anthropic, Google, OpenAI), each filled at run time with that vendor's most capable deep-reasoning model, answer independently, peer-review each other anonymously, and iterate through fresh-context checks to a strict all-seats APPROVE that preserves dissent and states its own flip condition. Revised 2026-09-12 after a council review of its own specification. | [README](council-skill/README.md) · [docs](council-skill/docs/index.html) · [changelog](council-skill/CHANGELOG.md) |
 | [`evidence-ingest-skill/`](evidence-ingest-skill/) | A deterministic, LLM-free closed-corpus ingestion pipeline: folder in, locked RAG-ready corpus out, with a hash-chained legal chain of custody, default-deny network guard, fail-closed gates, and a 5-agent adversarial selftest. OCR via Google Document AI (audited exception) or a local loopback container. Installs for both GitHub Copilot CLI and Claude Code. | [README](evidence-ingest-skill/README.md) · [docs](evidence-ingest-skill/docs/index.html) |
 | [`llm-cost-optimization-playbook/`](llm-cost-optimization-playbook/) | A portable brief you hand to any capable model — Claude, GPT, Gemini, local — so it profiles your own LLM spend and returns a ranked, costed optimization plan: intake, token profiling, free wins before tradeoffs, a prompt audit, and a mandated plan format. Distilled from Anthropic's published cost guidance and cited to it throughout. A document, not an installable package — there is no installer. | [README](llm-cost-optimization-playbook/README.md) · [playbook](llm-cost-optimization-playbook/PLAYBOOK.md) |
 
@@ -58,17 +58,20 @@ vendors**, not drafted by a single model. Each seat answered independently
 before anonymized cross-review, so no one model's blind spot could quietly
 become the specification:
 
-| Vendor | Seat, as filled in August 2026 |
-|---|---|
-| Anthropic | Claude Fable 5 |
-| Google | Gemini 3.1 Pro |
-| OpenAI | GPT-5.6 Sol |
+| Deliberation | Date | Anthropic | Google | OpenAI |
+|---|---|---|---|---|
+| Package designs (routing, route-tune, council, evidence-ingest) | August 2026 | Claude Fable 5 | Gemini 3.1 Pro | GPT-5.6 Sol |
+| Council self-review (`council-skill` 1.2.0) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra |
 
-That table is a dated record of which models deliberated the designs, not a
-current roster — those three were each vendor's deep-reasoning flagship at the
-time, and the vendors have shipped newer ones since. Significant effort went
-into that cross-vendor pass specifically because single-model design work reads
-as confident whether or not it is correct.
+Those rows are a dated record of which models deliberated which designs, not a
+current roster — each lists the vendor's deep-reasoning flagship on that date,
+and the vendors ship newer ones continually. Significant effort went into the
+cross-vendor pass specifically because single-model design work reads as
+confident whether or not it is correct. The September review turned the method
+on itself: the council's own specification went before the current flagships
+with a deep-research evidence packet and came back REVISE, not unanimously
+approved (93 / 96 / 88), with thirteen adopted changes and the dissent kept —
+see the council changelog.
 
 **Sources over recall.** Every claim that could be grounded was grounded in
 primary vendor documentation and published prior artifacts rather than model

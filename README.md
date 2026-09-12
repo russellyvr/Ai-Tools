@@ -69,6 +69,7 @@ become the specification:
 | Package designs (routing, route-tune, council, evidence-ingest) | August 2026 | Claude Fable 5 | Gemini 3.1 Pro | GPT-5.6 Sol |
 | Council self-review (`council-skill` 1.2.0) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra |
 | Council shakedown run (`council-skill` 1.2.2, unanimously approved) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra |
+| Council paired-evaluation pilot 1 (`council-skill` 1.2.3, nine briefs) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra |
 
 Those rows are a dated record of which models deliberated which designs, not a
 current roster — each lists the vendor's deep-reasoning flagship on that date,

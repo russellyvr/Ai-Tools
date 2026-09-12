@@ -14,7 +14,11 @@ publication approval under the rubric, never established accuracy.
 of the three vendors' current flagships and revised in thirteen places —
 see [`CHANGELOG.md`](CHANGELOG.md). **1.2.2:** the review's one preserved
 dissent (an enforced, not declared, tool-free profile for every seat) is
-resolved in the reference implementation.
+resolved in the reference implementation. **1.2.3:** the first
+paired-evaluation pilot ran on nine labelled briefs — results, limits and
+the two protocol fixes it forced are in [`EVALUATION.md`](EVALUATION.md);
+no accuracy gain over a single grounded model was measurable on those
+briefs.
 
 Full documentation: [`docs/index.html`](docs/index.html) (GitHub Pages).
 
@@ -90,7 +94,8 @@ model's blind spot could quietly become the spec:
 |---|---|---|---|---|---|
 | Original specification | August 2026 | Claude Fable 5 | Gemini 3.1 Pro | GPT-5.6 Sol | adopted with revisions |
 | Self-review of this specification | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in `CHANGELOG.md`; the preserved dissent resolved in the reference implementation the same day (1.2.2) |
-| Shakedown of the revised protocol (reference implementation, closed-book statutory brief) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | Unanimously approved after Check 2; Check 1 returned four FACT blockers on the clerk's draft, all corrected (90 / 100 / 90, then 95 / 100 / 99); first paired-evaluation data point, single-model arm not yet run |
+| Shakedown of the revised protocol (reference implementation, closed-book statutory brief) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | Unanimously approved after Check 2; Check 1 returned four FACT blockers on the clerk's draft, all corrected (90 / 100 / 90, then 95 / 100 / 99) |
+| Paired-evaluation pilot 1 (nine briefs, four adversarial, arms S/C/P/K1/K2) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | All arms correct on all briefs; 3 of 9 full runs unanimous; six correct answers blocked by two structural rules, both fixed in 1.2.3 — see `EVALUATION.md` |
 
 Those rows are a dated record of who deliberated the spec, not a roster. The
 skill itself pins no model: each row lists what the vendors' catalogs offered

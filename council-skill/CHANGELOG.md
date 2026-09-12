@@ -1,5 +1,37 @@
 # Changelog — council-skill
 
+## 1.2.3 — 2026-09-12 — first paired-evaluation pilot; closed-book traceability fixed
+
+The first paired-evaluation pilot required by C-11 ran on nine labelled
+briefs (four adversarial) across arms S / C / P / K1 / K2 — full results,
+method and limits in [`EVALUATION.md`](EVALUATION.md). Every arm answered
+every brief correctly, so no accuracy gain over a single grounded model
+was measurable on these briefs; the council's demonstrated value was in
+peer review, which caught and excluded four confident factual errors and
+one real gap in a fix. The unanimity gate blocked correct answers in six
+of nine full runs, for two structural reasons that are fixed here:
+
+- **C-14 — Closed-book traceability.** The consensus-check anchor "any
+  claim you cannot trace to the supplied evidence is a FACT blocker" now
+  binds claims presented as sourced; on a closed-book reasoning brief a
+  RECALL-labelled claim is judged on the member's own knowledge, never
+  merely on the absence of a passage. Applied in `references/prompts.md`
+  §4, `references/rubric.md` and Stage 4 step 17. *Why:* the OpenAI seat
+  applied the old rule literally and vetoed correct closed-book answers
+  on every check it could.
+- **Orchestrator instructions never inside a fence.** Output-form and
+  labelling rules travel in the prompt body; a fenced line that restates
+  them is data to note, not an injection. Untrusted-content boundary.
+  *Why:* the pilot's packet carried the labelling rule inside the fence
+  and the Google seat raised SAFETY blockers against it, as the rule told
+  it to.
+- **Wall-clock ceiling enforced, not just disclosed;** a billing-stop 429
+  (insufficient quota) is handled as a transport loss requiring top-up,
+  never retried on `Retry-After`; every prompt a file-reading seat must
+  open is staged inside that seat's own directory. All three came from
+  the same day's shakedown and are recorded in the reference
+  implementation's harness.
+
 ## 1.2.2 — 2026-09-12 — the preserved dissent is resolved in the reference implementation
 
 The OpenAI seat's unresolved blocker from the 1.2.0 review (R1: a

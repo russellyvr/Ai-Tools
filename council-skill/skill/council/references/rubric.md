@@ -40,8 +40,12 @@ Calibration rules:
   concrete, claim-linked entry under BLOCKERS and the changes that would
   clear each under REQUIRED_CHANGES. (This pairing is the anti-sycophancy
   and anti-stubborn-veto check.)
-- Any draft claim you cannot trace to the supplied evidence or a
-  resolvable source is a FACT blocker. [C-2]
+- A draft claim presented as sourced that you cannot trace to the
+  supplied evidence or a resolvable source is a FACT blocker. On a
+  closed-book reasoning brief, a RECALL-labelled claim is judged on its
+  correctness as the member knows it, not on the absence of a passage —
+  the 2026-09-12 paired-evaluation pilot showed the unqualified rule
+  vetoes correct closed-book answers structurally. [C-2] [C-14]
 - Judge the draft, not your ego: you are not shown your own earlier
   answer, and similarity to it is not a criterion in either direction.
 - On Check 2, judge the revised draft on its own merits from the

@@ -89,7 +89,8 @@ model's blind spot could quietly become the spec:
 | Deliberation | Date | Anthropic | Google | OpenAI | Outcome |
 |---|---|---|---|---|---|
 | Original specification | August 2026 | Claude Fable 5 | Gemini 3.1 Pro | GPT-5.6 Sol | adopted with revisions |
-| Self-review of this specification | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in `CHANGELOG.md` |
+| Self-review of this specification | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in `CHANGELOG.md`; the preserved dissent resolved in the reference implementation the same day (1.2.2) |
+| Shakedown of the revised protocol (reference implementation, closed-book statutory brief) | 12 September 2026 | Claude Fable 5.1 | Gemini 3.1 Pro | GPT-6 Astra | Unanimously approved after Check 2; Check 1 returned four FACT blockers on the clerk's draft, all corrected (90 / 100 / 90, then 95 / 100 / 99); first paired-evaluation data point, single-model arm not yet run |
 
 Those rows are a dated record of who deliberated the spec, not a roster. The
 skill itself pins no model: each row lists what the vendors' catalogs offered

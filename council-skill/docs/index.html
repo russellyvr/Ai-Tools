@@ -63,7 +63,7 @@ footer { font-size:12px; color:var(--secondary); margin-top:40px; }
 
 <div class="stat-row">
   <div class="stat"><div class="v">3</div><div class="l">fixed vendor seats — Anthropic &middot; Google &middot; OpenAI</div></div>
-  <div class="stat"><div class="v">&ge;90</div><div class="l">agreement score required from every seat</div></div>
+  <div class="stat"><div class="v">3&times;</div><div class="l">valid APPROVE verdicts required — one per seat, no blocker</div></div>
   <div class="stat"><div class="v">2</div><div class="l">max consensus revision checks</div></div>
   <div class="stat"><div class="v">5</div><div class="l">pipeline stages (intake &rarr; report)</div></div>
 </div>
@@ -76,8 +76,10 @@ consensus, or a deliberated verdict). The skill convenes three heterogeneous
 frontier models as isolated sub-agents. Each answers the frozen brief
 independently, then anonymously reviews the other two answers against a fixed
 rubric. An orchestrating "clerk" — deliberately barred from judging or answering
-the problem itself — synthesizes a draft and pushes it back to all three seats
-until every seat scores it &ge;90/100, or two revision checks are exhausted.
+the problem itself — synthesizes a draft and sends it to all three seats in
+fresh context until every seat returns a valid APPROVE (no FACT, SAFETY or
+PREFERENCE blocker), or two revision checks are exhausted. The 0-100
+agreement score is collected as a diagnostic; it is not the gate.
 The final report always contains a verdict, the strongest surviving dissent,
 and a <em>flip condition</em>: the specific evidence that would reverse the verdict.</p>
 </section>
@@ -93,9 +95,13 @@ and a <em>flip condition</em>: the specific evidence that would reverse the verd
 <tr><td class="k">Member C</td><td>OpenAI</td><td>resolved at Stage 0</td><td>highest supported</td><td>Isolated sub-agent</td></tr>
 </table></div>
 <p>No model IDs are hard-coded. At every run, Stage 0 fills each seat with its
-vendor's <em>latest deep-reasoning flagship</em>, resolved from the live model
-catalog (speed/distilled tiers — Flash-, mini-, Haiku-, Codex-class — are never
-eligible). The resolved roster is pinned into the frozen brief, is immutable for
+vendor's <em>most capable deep-reasoning model</em>, resolved from the live
+model catalog. Eligibility is decided by capability, never by product name:
+distilled and cost tiers (lite, mini, nano, Haiku) and non-chat product lines
+are never eligible, but a product-name tier such as "Flash" or "Sonnet" is not
+excluded by its name. When a newer non-flagship generation outranks the newest
+flagship, the resolver records a <code>tier_conflict</code> and the roster rule
+decides and discloses the choice. The resolved roster is pinned into the frozen brief, is immutable for
 the run, and is printed in the final report. If the orchestrator shares a model
 family with any seat, that same-model conflict is mitigated (anonymization,
 clerk-only role, peer-only scoring, unanimity gate) but not eliminated — it is
@@ -118,20 +124,26 @@ response with an identical prompt and a fixed answer contract (ANSWER /
 REASONING / ASSUMPTIONS / STRONGEST COUNTERARGUMENT / FLIP CONDITION /
 CONFIDENCE, &le;1,200 tokens). The roster is never named; peer review is never
 pre-announced.</li>
-<li><b>Stage 2 — Anonymized peer review.</b> One common scrubbed bundle tags
-each answer with an opaque per-run alias. Each member knows only its own alias
-and reviews exactly the other two: rankings, anchored rubric scores, errors,
-ideas worth retaining, self-revisions, and a &le;300-token STATE_CAPSULE that
-carries the seat's decision state forward.</li>
+<li><b>Stage 2 — Masked peer review.</b> Each member receives only the other
+two answers, mechanically scrubbed and fenced as untrusted data, in a
+deterministically counterbalanced order (every answer is Response 1 for one
+reviewer and Response 2 for the other). Reviews return anchored absolute
+rubric scores (accuracy incl. source fidelity, coverage, brief-fit,
+risk-honesty), errors, ideas worth retaining, self-revisions, an optional
+ranking with ties allowed, and a &le;300-token STATE_CAPSULE that carries
+the seat's decision state forward.</li>
 <li><b>Stage 3 — Consolidation.</b> The clerk builds a claim ledger
 (claim / evidence / support / conflicts) and drafts an attribution-free Draft 0.
 Evidence dominates: peer rankings inform but never mechanically weight; checkable
 claims are verified with local tools.</li>
-<li><b>Stage 4 — Consensus loop.</b> Each seat scores the draft against the
-frozen brief on a fixed schema (AGREEMENT_SCORE / MATERIAL_BLOCKERS /
-REQUIRED_CHANGES_TO_REACH_90 / MAIN_DISSENT / FLIP_CONDITION). Pass = all three
-valid scores &ge;90 — never averaged, inferred, or overridden. Max two checks;
-critiques are corrected, rebutted with tool-verified evidence, or preserved as
+<li><b>Stage 4 — Consensus loop.</b> Every sourced claim in the draft is
+first verified against its cited passage. Each seat then judges the draft in
+<em>fresh context</em> — never shown its own earlier answer or any prior
+score — on a fixed schema (VERDICT / AGREEMENT_SCORE / BLOCKERS labelled
+FACT | SAFETY | PREFERENCE / REQUIRED_CHANGES / MAIN_DISSENT / FLIP_CONDITION).
+Pass = three valid APPROVEs — never averaged, inferred, or overridden; a FACT
+or SAFETY blocker from any seat is never outvoted. Max two checks; critiques
+are corrected, rebutted with tool-verified evidence, or preserved as
 dissent.</li>
 <li><b>Stage 5 — Final report.</b> De-anonymization happens only here. The
 fixed template emits verdict &middot; answer &middot; why &middot; main dissent
@@ -146,9 +158,12 @@ scores &middot; summary table &middot; disclosures, plus an audit manifest.</li>
 <ul>
 <li><b>Clerk, never judge:</b> the orchestrator never scores member answers and
 never answers the problem itself; peer reviews are the only quality signal.</li>
-<li><b>Anti-sycophancy pairing:</b> a score &ge;90 requires
-<code>MATERIAL_BLOCKERS: none</code>; a score &lt;90 requires concrete
-required changes — vague vetoes and empty praise are both schema-invalid.</li>
+<li><b>Anti-sycophancy pairing:</b> APPROVE requires
+<code>BLOCKERS: none</code>; REVISE requires at least one concrete,
+claim-linked blocker and the change that would clear it — vague vetoes and
+empty praise are both schema-invalid. Approval means publication approval
+under the rubric, never established accuracy; a paired-evaluation fixture is
+required before any accuracy claim.</li>
 <li><b>Dissent is never lost:</b> a dropped or outvoted seat's last substantive
 objection is preserved in the report; a non-unanimous outcome is reported as
 "not unanimously approved", never papered over.</li>
@@ -235,7 +250,8 @@ spot could quietly become the spec:</p>
 <div class="scroll"><table>
 <tr><th>Deliberation</th><th>Date</th><th>Anthropic</th><th>Google</th><th>OpenAI</th><th>Outcome</th></tr>
 <tr><td class="k">Original specification</td><td>August 2026</td><td>Claude Fable 5</td><td>Gemini 3.1 Pro</td><td>GPT-5.6 Sol</td><td class="wraps">adopted with revisions</td></tr>
-<tr><td class="k">Self-review of this specification</td><td>12 September 2026</td><td>Claude Fable 5.1</td><td>Gemini 3.1 Pro</td><td>GPT-6 Astra</td><td class="wraps">REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in <code>CHANGELOG.md</code></td></tr>
+<tr><td class="k">Self-review of this specification</td><td>12 September 2026</td><td>Claude Fable 5.1</td><td>Gemini 3.1 Pro</td><td>GPT-6 Astra</td><td class="wraps">REVISE; not unanimously approved after two checks (diagnostic agreement 93 / 96 / 88); thirteen changes adopted, dissent preserved in <code>CHANGELOG.md</code>; the one preserved dissent (an enforced, not declared, tool-free profile for every seat) was resolved in the author's reference implementation the same day (1.2.2)</td></tr>
+<tr><td class="k">Shakedown of the revised protocol (reference implementation, closed-book statutory brief)</td><td>12 September 2026</td><td>Claude Fable 5.1</td><td>Gemini 3.1 Pro</td><td>GPT-6 Astra</td><td class="wraps">Unanimously approved after Check 2; Check 1 returned four FACT blockers on the clerk's draft, all corrected (diagnostic agreement 90 / 100 / 90, then 95 / 100 / 99). First data point of the paired-evaluation fixture; the single-model comparison arm has not yet run</td></tr>
 </table></div>
 <p>Those rows are a dated record of who deliberated the spec, not a roster. The
 skill itself pins no model: each row lists what the vendors' catalogs offered on
@@ -266,8 +282,9 @@ the same idea; informed the verdict / main-dissent / flip-condition report
 framing.</li>
 <li><b>Original extensions in this skill</b> (not in the sources): run-time
 flagship roster resolution (fixed vendors, no hard-coded model IDs); the frozen
-single-pushback intake brief; the strict all-seats-&ge;90 consensus gate with a
-bounded two-check revision loop; the clerk-not-judge invariant;
+single-pushback intake brief; the strict all-seats-APPROVE categorical gate
+with fresh-context, score-blind checks and a bounded two-check revision loop;
+the clerk-not-judge invariant;
 STATE_CAPSULE seat-state portability across fresh agents; EVIDENCE_GAP
 governance; the mandatory untrusted-content boundary (UNTRUSTED_DATA fencing,
 least-privilege member tool profiles, mechanical defanging of instruction-shaped

@@ -43,7 +43,7 @@ $Target    = Join-Path $CopilotHome 'skills' $SkillName
 if (-not (Test-Path (Join-Path $Source 'SKILL.md'))) {
     throw "Package is incomplete: '$Source\SKILL.md' not found. Run this script from the extracted package root."
 }
-foreach ($ref in 'prompts.md', 'rubric.md', 'output-template.md') {
+foreach ($ref in 'prompts.md', 'rubric.md', 'output-template.md', 'harness-template.md') {
     if (-not (Test-Path (Join-Path $Source 'references' $ref))) {
         throw "Package is incomplete: references\$ref is missing."
     }

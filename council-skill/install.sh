@@ -33,7 +33,7 @@ TARGET="$COPILOT_HOME/skills/$SKILL_NAME"
     echo "ERROR: '$SOURCE/SKILL.md' not found. Run this script from the extracted package root." >&2
     exit 1
 }
-for ref in prompts.md rubric.md output-template.md; do
+for ref in prompts.md rubric.md output-template.md harness-template.md; do
     [ -f "$SOURCE/references/$ref" ] || {
         echo "ERROR: package is incomplete: references/$ref is missing." >&2
         exit 1
